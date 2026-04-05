@@ -1,0 +1,139 @@
+/* ^ HOMESCREEN */
+
+
+
+.hero-logo-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+
+.hero-section {
+  position: relative;
+  z-index: 2;
+}
+
+.heading {
+  color: var(--gold);
+}
+
+.link:hover {
+  color: var(--red);
+}
+
+.hero-content {
+  max-width: 720px;
+  text-align: left;
+  padding-right: 2rem;
+}
+
+.hero-kicker {
+  margin-bottom: 1rem;
+  color: var(--gold);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-title {
+  margin: 0 0 1.25rem;
+  color: var(--white);
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  line-height: 0.95;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hero-title-accent {
+  color: var(--gold);
+}
+
+.hero-text {
+  max-width: 600px;
+  margin-bottom: 1.75rem;
+  color: var(--silver);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.85rem 1.35rem;
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.hero-btn-primary {
+  background-color: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+}
+
+.hero-btn-primary:hover {
+  background-color: transparent;
+  color: var(--gold);
+}
+
+.hero-btn-secondary {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(234, 234, 234, 0.18);
+  color: var(--white);
+}
+
+.hero-btn-secondary:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+
+.hero-img {
+  width: 100%;
+  max-width: 400px;
+}
+
+@media (max-width: 767px) {
+  .hero-content {
+    padding-right: 0;
+    margin-bottom: 2rem;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-img {
+    max-width: 260px;
+  }
+}
+
+
+
+
+/* ^ Spotify Playlist */
+.spotify-playlist {
+  margin-top: 2rem;
+}
+
+.spotify-embed {
+  border-radius: 12px;
+  border: none;
+  width: 100%;
+}

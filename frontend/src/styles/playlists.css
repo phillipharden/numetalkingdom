@@ -1,0 +1,133 @@
+/*^ PLAYLISTS SCREEN */
+
+.playlists-screen {
+  color: var(--silver);
+}
+
+.page-title {
+  margin-bottom: 10px;
+}
+
+.page-subtitle {
+  max-width: 720px;
+  margin: 0 auto;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.section-title {
+  margin-bottom: 20px;
+}
+
+.playlist-card {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.playlist-card.featured {
+  padding: 20px;
+}
+
+.playlist-image-wrap {
+  width: 100%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.playlist-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.playlist-content {
+  padding: 20px;
+}
+
+.playlist-title {
+  font-size: 1.35rem;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.playlist-description {
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.playlist-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.playlist-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  color: #fff;
+  background: var(--blood-red);
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.playlist-btn:hover {
+  transform: translateY(-2px);
+  color: #fff;
+  background: var(--gold);
+}
+
+.platform-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.platform-badge.spotify {
+  background: rgba(29, 185, 84, 0.2);
+  border: 1px solid rgba(29, 185, 84, 0.45);
+}
+
+.platform-badge.apple {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.platform-badge.youtube {
+  background: rgba(255, 0, 0, 0.18);
+  border: 1px solid rgba(255, 0, 0, 0.35);
+}
+
+.playlist-embed iframe {
+  width: 100%;
+  min-height: 352px;
+}
+
+@media (max-width: 767px) {
+  .playlist-card.featured {
+    padding: 0;
+  }
+
+  .playlist-content {
+    padding: 18px;
+  }
+
+  .playlist-title {
+    font-size: 1.2rem;
+  }
+}

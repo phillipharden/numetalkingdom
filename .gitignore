@@ -1,0 +1,10 @@
+*.mov
+*.mp4
+*.avi
+*.mkv
+*.zip
+
+
+.env
+
+

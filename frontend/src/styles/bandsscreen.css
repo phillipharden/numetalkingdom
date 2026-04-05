@@ -1,0 +1,148 @@
+.bands-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bands-search-wrap {
+  flex: 1 1 320px;
+}
+
+.bands-sort-wrap {
+  flex: 0 0 220px;
+}
+
+.bands-search,
+.bands-sort {
+  width: 100%;
+  background-color: var(--charcoal);
+  color: var(--white);
+  border: 1px solid var(--silver);
+  padding: 0.85rem 1rem;
+  outline: none;
+}
+
+.bands-search::placeholder {
+  color: var(--silver);
+}
+
+.bands-search:focus,
+.bands-sort:focus {
+  border-color: var(--gold);
+}
+
+.alpha-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.alpha-btn {
+  background: transparent;
+  border: 1px solid var(--silver);
+  color: var(--white);
+  min-width: 42px;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.9rem;
+  transition: 0.3s ease;
+}
+
+.alpha-btn:hover,
+.alpha-btn.active {
+  background-color: var(--blood-red);
+  border-color: var(--blood-red);
+  color: var(--white);
+}
+
+.bands-results-count p {
+  color: var(--silver);
+  margin: 0;
+}
+
+.band-meta {
+  color: var(--silver);
+  font-size: 0.9rem;
+}
+
+.no-results h3 {
+  color: var(--gold);
+}
+
+.no-results p {
+  color: var(--silver);
+}
+
+
+
+
+
+/* ^ bands directory */
+.bands-directory-list {
+  column-count: 1;
+  column-gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .bands-directory-list {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 1200px) {
+  .bands-directory-list {
+    column-count: 3;
+  }
+}
+
+.bands-directory-link {
+  display: block;
+  break-inside: avoid;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 0.35rem;
+  transition: 0.2s ease;
+}
+
+.bands-directory-link:hover {
+  color: var(--gold);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.bands-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-btn {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-btn.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.filter-btn:hover {
+  background: #eee;
+}

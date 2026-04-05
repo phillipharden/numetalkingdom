@@ -1,0 +1,261 @@
+/* Mobile First (default) */
+
+/* Small tablets */
+@media (min-width: 576px) { }
+
+/* Tablets */
+@media (min-width: 768px) { }
+
+/* Small desktops */
+@media (min-width: 992px) { }
+
+/* Large desktops */
+@media (min-width: 1200px) { }
+
+/* Extra large screens */
+@media (min-width: 1400px) { }
+
+
+/* ^ FONT */
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/*^ COLORS */
+/*
+🧠 How I Recommend Using Each Color
+
+Black (#0B0B0B)
+Main background color for site
+
+Charcoal (#1A1A1A)
+Cards, sections, nav background
+
+Gold (#C9A227)
+
+Logo color
+Section headers
+Accent lines
+Buttons (primary CTA)
+
+Blood Red (#8B0000)
+
+Hover effects
+Links
+Breaking news tags
+"New" badges
+
+Silver (#C0C0C0)
+
+Secondary text
+Icons
+ */
+:root {
+  --black: #0B0B0B;
+  --charcoal: #1A1A1A;
+  --gold: #C9A227;
+  --red: #8B0000;
+  --silver: #C0C0C0;
+  --white: #EAEAEA;
+
+}
+
+body {
+  font-family: "Oswald", sans-serif;
+  background-color: var(--black);
+  color: var(--white);
+  padding: 0;
+  margin: 0;
+}
+
+
+
+
+
+
+/*^ Image */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+
+.mobile-img {
+  display: none;
+  max-width: 70vw;
+}
+
+.desktop-img {
+  display: block;
+  max-width: 600px;
+}
+
+@media screen and (max-width: 768px) {
+  .desktop-img {
+    display: none;
+  }
+
+  .mobile-img {
+    display: block;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(0px, 0px);
+  }
+
+  20% {
+    transform: translate(-3px, 2px);
+  }
+
+  40% {
+    transform: translate(3px, -2px);
+  }
+
+  60% {
+    transform: translate(-3px, 2px);
+  }
+
+  80% {
+    transform: translate(3px, -2px);
+  }
+
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out infinite;
+  animation-delay: 0s;
+  animation-duration: 0.3s;
+  animation-iteration-count: 1;
+}
+
+
+@keyframes timed-shake {
+
+  0%,
+  97% {
+    transform: translate(0px, 0px);
+  }
+
+  98% {
+    transform: translate(-3px, 2px);
+  }
+
+  99% {
+    transform: translate(3px, -2px);
+  }
+
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+.timed-shake {
+  animation: timed-shake 4s infinite ease-in-out;
+}
+
+
+
+
+
+
+
+
+/* ^ BANDS */
+
+
+.bands-page,
+.band-detail {
+  background-color: var(--black);
+  color: var(--white);
+  min-height: 100vh;
+}
+
+.page-title {
+  color: var(--gold);
+  font-size: 3rem;
+  text-transform: uppercase;
+}
+
+.page-subtitle {
+  color: var(--silver);
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--silver);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  text-transform: capitalize;
+  transition: 0.3s ease;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  background-color: var(--blood-red);
+  border-color: var(--blood-red);
+  color: var(--white);
+}
+
+.band-card {
+  background-color: var(--charcoal);
+  border: 1px solid #2a2a2a;
+  overflow: hidden;
+  height: 100%;
+}
+
+.band-card-img,
+.band-detail-img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.band-card-body {
+  padding: 1.25rem;
+}
+
+.band-card h2,
+.band-detail h1,
+.band-detail h3 {
+  color: var(--gold);
+}
+
+.band-tag {
+  display: inline-block;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background-color: rgba(201, 162, 39, 0.12);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.band-link,
+.back-link,
+.band-links a {
+  color: var(--blood-red);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.band-link:hover,
+.back-link:hover,
+.band-links a:hover {
+  color: var(--gold);
+}
+

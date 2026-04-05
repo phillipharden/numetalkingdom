@@ -1,0 +1,105 @@
+.band-detail {
+  background-color: var(--black);
+  color: var(--white);
+  min-height: 100vh;
+}
+
+.band-detail h1,
+.band-detail h3 {
+  color: var(--gold);
+}
+
+.band-detail-description {
+  color: var(--white);
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.band-detail-img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  background-color: var(--charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.band-detail-placeholder {
+  width: 100%;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--silver);
+  font-size: 1.25rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.band-list {
+  padding-left: 1.2rem;
+  color: var(--silver);
+}
+
+.band-list li {
+  margin-bottom: 0.5rem;
+}
+
+.band-links a {
+  color: var(--white);
+  text-decoration: none;
+  border: 1px solid var(--silver);
+  padding: 0.65rem 1rem;
+  transition: 0.3s ease;
+}
+
+.band-links a:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--blood-red);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  color: var(--gold);
+}
+
+
+.band-detail-img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+
+.band-detail-placeholder {
+  width: 100%;
+  height: 350px;
+  background: linear-gradient(
+    135deg,
+    var(--charcoal),
+    var(--black)
+  );
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid var(--silver);
+}
+
+.placeholder-content h3 {
+  color: var(--white);
+  margin-bottom: 5px;
+}
+
+.placeholder-content p {
+  color: var(--silver);
+  font-size: 14px;
+}
