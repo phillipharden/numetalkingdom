@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import releases from "../assets/data/releases-data";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+
 import {
   formatReleaseHeading,
   groupReleasesByDate,
@@ -17,25 +19,37 @@ const parseLocalDate = (dateString) => {
 };
 
 const UpcomingReleases = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const [releases, setReleases] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const upcomingReleases = releases
-    .filter((release) => {
-      const parsedDate = parseLocalDate(release.releaseDate);
-      return parsedDate && parsedDate >= today;
-    })
-    .sort((a, b) => {
-      const dateA = parseLocalDate(a.releaseDate);
-      const dateB = parseLocalDate(b.releaseDate);
-      return dateA - dateB;
-    })
-    .slice(0, 10);
+  useEffect(() => {
+    const fetchReleases = async () => {
+      const today = new Date().toISOString().split("T")[0];
+
+      const { data, error } = await supabase
+        .from("releases")
+        .select("*")
+        .gte("release_date", today)
+        .order("release_date", { ascending: true })
+        .order("priority", { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error("Error fetching releases:", error);
+      } else {
+        setReleases(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchReleases();
+  }, []);
 
   const groupedReleases = groupReleasesByDate(
-    upcomingReleases.map((release) => ({
+    releases.map((release) => ({
       ...release,
-      date: release.releaseDate,
+      releaseDate: release.release_date,
     }))
   );
 
@@ -61,9 +75,9 @@ const UpcomingReleases = () => {
   };
 
   const getUmbrellaBadgeText = (release) => {
-    if (!release.nuMetalUmbrella) return null;
+    if (!release.nu_metal_umbrella) return null;
 
-    switch (release.umbrellaCategory) {
+    switch (release.umbrella_category) {
       case "nu-metal":
         return "Spotlight";
       case "adjacent":
@@ -76,14 +90,14 @@ const UpcomingReleases = () => {
   const getReleaseItemClass = (release) => {
     let className = "release-item";
 
-    if (release.nuMetalUmbrella) {
+    if (release.nu_metal_umbrella) {
       className += " release-item--highlight";
 
-      if (release.umbrellaCategory === "nu-metal") {
+      if (release.umbrella_category === "nu-metal") {
         className += " release-item--nu-metal";
       }
 
-      if (release.umbrellaCategory === "adjacent") {
+      if (release.umbrella_category === "adjacent") {
         className += " release-item--adjacent";
       }
     } else {
@@ -100,9 +114,9 @@ const UpcomingReleases = () => {
   const renderReleaseLinks = (release) => {
     const hasLinks =
       release.presave ||
-      release.spotifyUrl ||
-      release.appleUrl ||
-      release.youtubeUrl;
+      release.spotify_url ||
+      release.apple_url ||
+      release.youtube_url;
 
     if (!hasLinks) return null;
 
@@ -119,9 +133,9 @@ const UpcomingReleases = () => {
           </a>
         )}
 
-        {release.spotifyUrl && (
+        {release.spotify_url && (
           <a
-            href={release.spotifyUrl}
+            href={release.spotify_url}
             target="_blank"
             rel="noopener noreferrer"
             className="release-link"
@@ -130,9 +144,9 @@ const UpcomingReleases = () => {
           </a>
         )}
 
-        {release.appleUrl && (
+        {release.apple_url && (
           <a
-            href={release.appleUrl}
+            href={release.apple_url}
             target="_blank"
             rel="noopener noreferrer"
             className="release-link"
@@ -141,9 +155,9 @@ const UpcomingReleases = () => {
           </a>
         )}
 
-        {release.youtubeUrl && (
+        {release.youtube_url && (
           <a
-            href={release.youtubeUrl}
+            href={release.youtube_url}
             target="_blank"
             rel="noopener noreferrer"
             className="release-link"
@@ -166,7 +180,7 @@ const UpcomingReleases = () => {
 
             <span
               className={`release-artist ${
-                release.nuMetalUmbrella ? "release-artist--nu-metal" : ""
+                release.nu_metal_umbrella ? "release-artist--nu-metal" : ""
               }`}
             >
               {release.artist}
@@ -182,15 +196,7 @@ const UpcomingReleases = () => {
 
           <div className="release-item__badges">
             {badgeText && (
-              <span
-                className={`release-badge ${
-                  release.umbrellaCategory === "nu-metal"
-                    ? "release-badge--nu-metal"
-                    : release.umbrellaCategory === "adjacent"
-                    ? "release-badge--adjacent"
-                    : ""
-                }`}
-              >
+              <span className="release-badge">
                 {badgeText}
               </span>
             )}
@@ -206,9 +212,9 @@ const UpcomingReleases = () => {
         {(release.genre ||
           release.notes ||
           release.presave ||
-          release.spotifyUrl ||
-          release.appleUrl ||
-          release.youtubeUrl) && (
+          release.spotify_url ||
+          release.apple_url ||
+          release.youtube_url) && (
           <div className="release-item__details">
             {release.genre && (
               <span className="release-genre">{release.genre}</span>
@@ -225,7 +231,7 @@ const UpcomingReleases = () => {
     );
   };
 
-  if (groupedEntries.length === 0) {
+  if (loading || groupedEntries.length === 0) {
     return (
       <section className="upcoming-releases-section">
         <div className="container">
@@ -253,52 +259,17 @@ const UpcomingReleases = () => {
         </div>
 
         <div className="upcoming-releases-groups">
-          {groupedEntries.map(([date, items]) => {
-            const sortedItems = [...items].sort((a, b) => {
-              const priorityA = a.priority ?? 1;
-              const priorityB = b.priority ?? 1;
+          {groupedEntries.map(([date, items]) => (
+            <div key={date} className="release-date-group">
+              <h3 className="release-date-heading">
+                {formatReleaseHeading(date)}
+              </h3>
 
-              if (priorityB !== priorityA) {
-                return priorityB - priorityA;
-              }
-
-              return a.artist.localeCompare(b.artist);
-            });
-
-            const albumsAndEps = sortedItems.filter(
-              (item) => item.type === "album" || item.type === "ep"
-            );
-
-            const singles = sortedItems.filter(
-              (item) => item.type === "single"
-            );
-
-            return (
-              <div key={date} className="release-date-group">
-                <h3 className="release-date-heading">
-                  {formatReleaseHeading(date)}
-                </h3>
-
-                {albumsAndEps.length > 0 && (
-                  <div className="release-group-block">
-                    <h4 className="release-type-heading">Albums & EPs</h4>
-                    <ul className="release-list">
-                      {albumsAndEps.map(renderReleaseItem)}
-                    </ul>
-                  </div>
-                )}
-
-                {singles.length > 0 && (
-                  <div className="release-group-block">
-                    <h4 className="release-type-heading">Singles</h4>
-                    <ul className="release-list">
-                      {singles.map(renderReleaseItem)}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              <ul className="release-list">
+                {items.map(renderReleaseItem)}
+              </ul>
+            </div>
+          ))}
         </div>
 
         <div className="see-more-releases">

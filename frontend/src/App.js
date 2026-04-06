@@ -48,6 +48,8 @@ import { supabase } from "./lib/supabase";
 
 import AdminLoginScreen from "./screens/AdminLoginScreen";
 import AdminBandsScreen from "./screens/AdminBandsScreen";
+import AdminReleasesScreen from "./screens/AdminReleasesScreen";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomeScreen from "./screens/HomeScreen";
@@ -80,6 +82,7 @@ function App() {
       <ScrollToTop />
       <Header />
       <Routes>
+        
         <Route path="/" element={<HomeScreen />} />
         <Route path="/bands" element={<BandsScreen />} />
         <Route path="/bands/:slug" element={<BandDetailScreen />} />
@@ -89,10 +92,12 @@ function App() {
         <Route path="/releases" element={<ReleasesPage />} />
         <Route path="/articles" element={<ArticlesScreen />} />
         <Route path="/articles/:slug" element={<ArticleDetailsScreen />} />
-        
+
         {/* Admin Screens */}
         <Route path="/admin-login" element={<AdminLoginScreen />} />
         <Route path="/admin" element={<AdminBandsScreen />} />
+        <Route path="/admin-releases" element={<AdminReleasesScreen />} />
+
       </Routes>
       <Footer />
     </Router>

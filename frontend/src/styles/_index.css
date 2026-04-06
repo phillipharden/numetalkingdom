@@ -259,3 +259,17 @@ img {
   color: var(--gold);
 }
 
+
+
+
+/*^ MOBILE INPUT FIX */
+
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+

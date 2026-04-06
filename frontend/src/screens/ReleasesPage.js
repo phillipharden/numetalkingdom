@@ -1,13 +1,44 @@
-import releases from "../assets/data/releases-data";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+
 import {
   formatReleaseHeading,
-  getUpcomingReleases,
   groupReleasesByDate,
 } from "../utils/releaseHelpers";
 
 const ReleasesPage = () => {
-  const upcomingReleases = getUpcomingReleases(releases);
-  const groupedReleases = groupReleasesByDate(upcomingReleases);
+  const [releases, setReleases] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReleases = async () => {
+      const today = new Date().toISOString().split("T")[0];
+
+      const { data, error } = await supabase
+        .from("releases")
+        .select("*")
+        .gte("release_date", today)
+        .order("release_date", { ascending: true })
+        .order("priority", { ascending: false });
+
+      if (error) {
+        console.error("Error loading releases:", error);
+      } else {
+        setReleases(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchReleases();
+  }, []);
+
+  const groupedReleases = groupReleasesByDate(
+    releases.map((release) => ({
+      ...release,
+      releaseDate: release.release_date,
+    }))
+  );
 
   const groupedEntries = Object.entries(groupedReleases).sort(
     ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
@@ -27,29 +58,29 @@ const ReleasesPage = () => {
   };
 
   const getUmbrellaBadgeText = (release) => {
-    if (!release.nuMetalUmbrella) return null;
+    if (!release.nu_metal_umbrella) return null;
 
-    switch (release.umbrellaCategory) {
+    switch (release.umbrella_category) {
       case "nu-metal":
         return "Nu Metal";
       case "adjacent":
         return "Adjacent";
       default:
-        return "Featured";
+        return null;
     }
   };
 
   const getReleaseItemClass = (release) => {
     let className = "release-item";
 
-    if (release.nuMetalUmbrella) {
+    if (release.nu_metal_umbrella) {
       className += " release-item--highlight";
 
-      if (release.umbrellaCategory === "nu-metal") {
+      if (release.umbrella_category === "nu-metal") {
         className += " release-item--nu-metal";
       }
 
-      if (release.umbrellaCategory === "adjacent") {
+      if (release.umbrella_category === "adjacent") {
         className += " release-item--adjacent";
       }
     } else {
@@ -66,9 +97,9 @@ const ReleasesPage = () => {
   const renderReleaseLinks = (release) => {
     const hasLinks =
       release.presave ||
-      release.spotifyUrl ||
-      release.appleUrl ||
-      release.youtubeUrl;
+      release.spotify_url ||
+      release.apple_url ||
+      release.youtube_url;
 
     if (!hasLinks) return null;
 
@@ -85,9 +116,9 @@ const ReleasesPage = () => {
           </a>
         )}
 
-        {release.spotifyUrl && (
+        {release.spotify_url && (
           <a
-            href={release.spotifyUrl}
+            href={release.spotify_url}
             target="_blank"
             rel="noopener noreferrer"
             className="release-link"
@@ -96,9 +127,9 @@ const ReleasesPage = () => {
           </a>
         )}
 
-        {release.appleUrl && (
+        {release.apple_url && (
           <a
-            href={release.appleUrl}
+            href={release.apple_url}
             target="_blank"
             rel="noopener noreferrer"
             className="release-link"
@@ -107,9 +138,9 @@ const ReleasesPage = () => {
           </a>
         )}
 
-        {release.youtubeUrl && (
+        {release.youtube_url && (
           <a
-            href={release.youtubeUrl}
+            href={release.youtube_url}
             target="_blank"
             rel="noopener noreferrer"
             className="release-link"
@@ -121,62 +152,74 @@ const ReleasesPage = () => {
     );
   };
 
-  const renderReleaseItem = (release) => {
-    const badgeText = getUmbrellaBadgeText(release);
+const renderReleaseItem = (release) => {
+  const badgeText = getUmbrellaBadgeText(release);
 
-    return (
-      <li key={release.id} className={getReleaseItemClass(release)}>
-        <div className="release-item__main">
+  return (
+    <li key={release.id} className={getReleaseItemClass(release)}>
+
+      {release.cover_url && (
+        <div className="release-cover">
+          <img
+            src={release.cover_url}
+            alt={`${release.artist} ${release.title}`}
+          />
+        </div>
+      )}
+
+      <div className="release-item__main">
+        <span
+          className={`release-artist ${
+            release.umbrella_category === "nu-metal"
+              ? "release-artist--nu-metal"
+              : ""
+          }`}
+        >
+          {release.artist}
+        </span>{" "}
+        <span className="release-title">{release.title}</span>{" "}
+        <span className="release-meta">
+          — {getTypeLabel(release.type)}
+          {release.label && ` [${release.label}]`}
+        </span>
+
+        {badgeText && (
           <span
-            className={`release-artist ${
-              release.umbrellaCategory === "nu-metal"
-                ? "release-artist--nu-metal"
+            className={`release-badge ${
+              release.umbrella_category === "nu-metal"
+                ? "release-badge--nu-metal"
+                : release.umbrella_category === "adjacent"
+                ? "release-badge--adjacent"
                 : ""
             }`}
           >
-            {release.artist}
-          </span>{" "}
-          <span className="release-title">{release.title}</span>{" "}
-          <span className="release-meta">
-            — {getTypeLabel(release.type)} [{release.label}]
+            {badgeText}
           </span>
-
-          {badgeText && (
-            <span
-              className={`release-badge ${
-                release.umbrellaCategory === "nu-metal"
-                  ? "release-badge--nu-metal"
-                  : release.umbrellaCategory === "adjacent"
-                  ? "release-badge--adjacent"
-                  : ""
-              }`}
-            >
-              {badgeText}
-            </span>
-          )}
-        </div>
-
-        {(release.genre ||
-          release.notes ||
-          release.presave ||
-          release.spotifyUrl ||
-          release.appleUrl ||
-          release.youtubeUrl) && (
-          <div className="release-item__details">
-            {release.genre && (
-              <span className="release-genre">{release.genre}</span>
-            )}
-
-            {release.notes && (
-              <p className="release-notes">{release.notes}</p>
-            )}
-
-            {renderReleaseLinks(release)}
-          </div>
         )}
-      </li>
-    );
-  };
+      </div>
+
+      {(release.genre ||
+        release.notes ||
+        release.presave ||
+        release.spotify_url ||
+        release.apple_url ||
+        release.youtube_url) && (
+        <div className="release-item__details">
+          {release.genre && (
+            <span className="release-genre">{release.genre}</span>
+          )}
+
+          {release.notes && (
+            <p className="release-notes">{release.notes}</p>
+          )}
+
+          {renderReleaseLinks(release)}
+        </div>
+      )}
+
+    </li>
+  );
+};
 
   return (
     <section className="releases-page">
@@ -194,7 +237,11 @@ const ReleasesPage = () => {
                 </p>
               </header>
 
-              {groupedEntries.length === 0 ? (
+              {loading ? (
+                <div className="releases-empty">
+                  <p>Loading releases...</p>
+                </div>
+              ) : groupedEntries.length === 0 ? (
                 <div className="releases-empty">
                   <p>No upcoming releases are listed right now.</p>
                 </div>
