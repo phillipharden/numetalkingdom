@@ -1,23 +1,62 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import articles from "../assets/data/articles-data";
+import { supabase } from "../lib/supabase";
 import ArticleDetails from "../components/ArticleDetails";
 
 const ArticleDetailsScreen = () => {
-  const params = useParams();
-  const slug = decodeURIComponent(params.slug || "").trim();
+  const { slug } = useParams();
 
-  console.log("params:", params);
-  console.log("slug from URL:", slug);
-  console.log(
-    "available slugs:",
-    articles.map((item) => item.slug)
-  );
+  const [article, setArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const article = articles.find(
-    (item) => String(item.slug || "").trim() === slug
-  );
+  useEffect(() => {
+    const fetchArticle = async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("*")
+        .eq("slug", decodeURIComponent(slug || "").trim())
+        .maybeSingle();
 
-  console.log("matched article:", article);
+      if (error) {
+        console.error("Error loading article:", error);
+        setArticle(null);
+      } else {
+        console.log("RAW ARTICLE FROM DB:", data);
+
+        const normalizedArticle = data
+          ? {
+              ...data,
+              cardImage: data.card_image || "",
+              cardImageAlt: data.card_image_alt || "",
+              contentHtml: data.content_html || "",
+              heroMedia: data.hero_media || {},
+              bottomImageUrl: data.bottom_image_url || "",
+              ogImageUrl: data.og_image_url || "",
+              video: data.video || {},
+            }
+          : null;
+
+        console.log("NORMALIZED ARTICLE:", normalizedArticle);
+        console.log("VIDEO OBJECT:", normalizedArticle?.video);
+
+        setArticle(normalizedArticle);
+      }
+
+      setLoading(false);
+    };
+
+    fetchArticle();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <section className="py-6">
+        <div className="container">
+          <h1>Loading Article...</h1>
+        </div>
+      </section>
+    );
+  }
 
   if (!article) {
     return (
@@ -25,9 +64,6 @@ const ArticleDetailsScreen = () => {
         <div className="container">
           <h1>Article Not Found</h1>
           <p>We couldn’t find that article.</p>
-          <p><strong>Slug from URL:</strong> {slug}</p>
-          <p><strong>Available slugs:</strong></p>
-          <pre>{JSON.stringify(articles.map((item) => item.slug), null, 2)}</pre>
         </div>
       </section>
     );

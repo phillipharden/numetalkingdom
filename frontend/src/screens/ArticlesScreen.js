@@ -1,8 +1,39 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import articles from "../assets/data/articles-data";
+import { supabase } from "../lib/supabase";
 
 const ArticlesScreen = () => {
-  console.log("articles on listing page:", articles);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("*")
+        .order("date", { ascending: false });
+
+      if (error) {
+        console.error("Error loading articles:", error);
+      } else {
+        setArticles(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchArticles();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="articles-screen py-6">
+        <div className="container text-center">
+          <h2>Loading Articles...</h2>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="articles-screen py-6">
@@ -28,8 +59,14 @@ const ArticlesScreen = () => {
                   className="article-card-image-link"
                 >
                   <img
-                    src={article.cardImage || "/images/articles/default.jpg"}
-                    alt={article.cardImageAlt || article.title}
+                    src={
+                      article.card_image ||
+                      "/images/articles/default.jpg"
+                    }
+                    alt={
+                      article.card_image_alt ||
+                      article.title
+                    }
                     className="article-card-image"
                   />
                 </Link>
@@ -37,7 +74,9 @@ const ArticlesScreen = () => {
                 <div className="article-card-body">
                   <p className="article-card-meta">
                     <span>{article.category || "News"}</span>
-                    {article.date && <span> • {article.date}</span>}
+                    {article.date && (
+                      <span> • {article.date}</span>
+                    )}
                   </p>
 
                   <h2 className="article-card-title">
@@ -47,11 +86,15 @@ const ArticlesScreen = () => {
                   </h2>
 
                   {article.artist && (
-                    <p className="article-card-artist">{article.artist}</p>
+                    <p className="article-card-artist">
+                      {article.artist}
+                    </p>
                   )}
 
                   {article.excerpt && (
-                    <p className="article-card-excerpt">{article.excerpt}</p>
+                    <p className="article-card-excerpt">
+                      {article.excerpt}
+                    </p>
                   )}
 
                   <Link

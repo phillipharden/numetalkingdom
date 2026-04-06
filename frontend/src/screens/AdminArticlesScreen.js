@@ -30,7 +30,9 @@ const ArticleDetails = ({ article }) => {
   const articleUrl = `${siteUrl}/articles/${slug}`;
 
   const shareImage =
-    ogImageUrl || cardImage || `${siteUrl}/images/articles/default.jpg`;
+    ogImageUrl ||
+    cardImage ||
+    `${siteUrl}/images/articles/default.jpg`;
 
   const heroImageUrl = heroMedia?.url || heroMedia?.src || "";
 
@@ -39,25 +41,17 @@ const ArticleDetails = ({ article }) => {
 
     if (url.includes("youtube.com/embed/")) return url;
 
-    const watchMatch = url.match(/[?&]v=([^&]+)/);
-    if (watchMatch?.[1]) {
-      return `https://www.youtube.com/embed/${watchMatch[1]}`;
-    }
+    const regExp =
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/;
 
-    const shortMatch = url.match(/youtu\.be\/([^?&/]+)/);
-    if (shortMatch?.[1]) {
-      return `https://www.youtube.com/embed/${shortMatch[1]}`;
-    }
+    const match = url.match(regExp);
 
-    return "";
+    if (!match?.[1]) return "";
+
+    return `https://www.youtube.com/embed/${match[1]}`;
   };
 
-  const youtubeUrl = video?.url || "";
-  const youtubeEmbedUrl = getYouTubeEmbedUrl(youtubeUrl);
-
-  console.log("ARTICLE VIDEO:", video);
-  console.log("YOUTUBE URL:", youtubeUrl);
-  console.log("YOUTUBE EMBED URL:", youtubeEmbedUrl);
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(video?.url);
 
   return (
     <>
@@ -91,8 +85,11 @@ const ArticleDetails = ({ article }) => {
 
         <h1 className="article-title">{title}</h1>
 
-        {artist && <div className="article-artist">{artist}</div>}
+        {artist && (
+          <div className="article-artist">{artist}</div>
+        )}
 
+        {/* YouTube FIRST */}
         {youtubeEmbedUrl ? (
           <div className="article-hero">
             <div className="article-video">
@@ -101,7 +98,7 @@ const ArticleDetails = ({ article }) => {
                 src={youtubeEmbedUrl}
                 title={title}
                 frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             </div>

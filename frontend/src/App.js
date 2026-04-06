@@ -41,14 +41,15 @@
 // export default App;
 
 
-import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
-import { supabase } from "./lib/supabase";
 
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import AdminLoginScreen from "./screens/AdminLoginScreen";
+import AdminScreen from "./screens/AdminScreen";
 import AdminBandsScreen from "./screens/AdminBandsScreen";
 import AdminReleasesScreen from "./screens/AdminReleasesScreen";
+import AdminArticlesScreen from "./screens/AdminArticlesScreen";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -56,7 +57,6 @@ import HomeScreen from "./screens/HomeScreen";
 import BandsScreen from "./screens/BandsScreen";
 import BandDetailScreen from "./screens/BandDetailsScreen";
 import NewMusicScreen from "./screens/NewMusicScreen";
-import DiscoverScreen from "./screens/DiscoverScreen";
 import AboutScreen from "./screens/AboutScreen";
 import ReleasesPage from "./screens/ReleasesPage";
 import ArticlesScreen from "./screens/ArticlesScreen";
@@ -64,25 +64,11 @@ import ArticleDetailsScreen from "./screens/ArticleDetailsScreen";
 import PlaylistsScreen from "./screens/PlaylistsScreen";
 
 function App() {
-  useEffect(() => {
-    const testSupabase = async () => {
-      const { data, error } = await supabase
-        .from("bands")
-        .select("*")
-        .limit(1);
-
-      console.log("Supabase test:", data, error);
-    };
-
-    testSupabase();
-  }, []);
-
   return (
     <Router>
       <ScrollToTop />
       <Header />
       <Routes>
-        
         <Route path="/" element={<HomeScreen />} />
         <Route path="/bands" element={<BandsScreen />} />
         <Route path="/bands/:slug" element={<BandDetailScreen />} />
@@ -93,10 +79,33 @@ function App() {
         <Route path="/articles" element={<ArticlesScreen />} />
         <Route path="/articles/:slug" element={<ArticleDetailsScreen />} />
 
-        {/* Admin Screens */}
         <Route path="/admin-login" element={<AdminLoginScreen />} />
-        <Route path="/admin" element={<AdminBandsScreen />} />
-        <Route path="/admin-releases" element={<AdminReleasesScreen />} />
+         <Route path="/admin" element={
+          <ProtectedAdminRoute>
+            <AdminScreen />
+          </ProtectedAdminRoute>
+        } />
+        <Route path="/admin-bands" element={
+          <ProtectedAdminRoute>
+            <AdminBandsScreen />
+          </ProtectedAdminRoute>
+        } />
+        <Route path="/admin-releases" element={
+          <ProtectedAdminRoute>
+            <AdminReleasesScreen />
+          </ProtectedAdminRoute>
+        } />
+        <Route
+          path="/admin-articles" element={
+            <ProtectedAdminRoute>
+              <AdminArticlesScreen />
+            </ProtectedAdminRoute>
+          } />
+
+
+
+
+
 
       </Routes>
       <Footer />
