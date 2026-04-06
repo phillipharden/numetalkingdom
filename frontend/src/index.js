@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from "react-helmet-async";
 
-
+import './styles/admin.css';
 import './styles/ShoeStrap.css';
 import './styles/_index.css';
 import './styles/header.css';

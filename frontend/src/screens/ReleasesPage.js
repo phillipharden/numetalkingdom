@@ -65,12 +65,26 @@ const ReleasesPage = () => {
 
   const renderReleaseLinks = (release) => {
     const hasLinks =
-      release.spotifyUrl || release.appleUrl || release.youtubeUrl;
+      release.presave ||
+      release.spotifyUrl ||
+      release.appleUrl ||
+      release.youtubeUrl;
 
     if (!hasLinks) return null;
 
     return (
       <div className="release-links">
+        {release.presave && (
+          <a
+            href={release.presave}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="release-link release-link--presave"
+          >
+            Pre-Save
+          </a>
+        )}
+
         {release.spotifyUrl && (
           <a
             href={release.spotifyUrl}
@@ -142,7 +156,12 @@ const ReleasesPage = () => {
           )}
         </div>
 
-        {(release.genre || release.notes || release.spotifyUrl || release.appleUrl || release.youtubeUrl) && (
+        {(release.genre ||
+          release.notes ||
+          release.presave ||
+          release.spotifyUrl ||
+          release.appleUrl ||
+          release.youtubeUrl) && (
           <div className="release-item__details">
             {release.genre && (
               <span className="release-genre">{release.genre}</span>
@@ -167,7 +186,9 @@ const ReleasesPage = () => {
             <div className="releases-main">
               <header className="releases-page__header">
                 <p className="releases-page__kicker">Nu Metal Kingdom</p>
-                <h1 className="releases-page__title">Upcoming Christian Music Releases</h1>
+                <h1 className="releases-page__title">
+                  Upcoming Christian Music Releases
+                </h1>
                 <p className="releases-page__subtitle">
                   All upcoming releases, with Nu Metal umbrella titles highlighted.
                 </p>

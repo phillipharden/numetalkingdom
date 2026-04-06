@@ -1,0 +1,26 @@
+{
+  "name": "numetalkingdom",
+  "version": "1.0.0",
+  "description": "Band Images → 800x800 | Release Artwork → 1000x1000 | Article Images → 1200x675",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "seed:bands": "node scripts/seedBands.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phillipharden/numetalkingdom.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/phillipharden/numetalkingdom/issues"
+  },
+  "homepage": "https://github.com/phillipharden/numetalkingdom#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.101.1",
+    "dotenv": "^17.4.1"
+  }
+}

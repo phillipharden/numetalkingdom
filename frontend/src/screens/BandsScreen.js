@@ -1,12 +1,56 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import bands from "../assets/data/bands-data";
+import { supabase } from "../lib/supabase";
+
+const PAGE_SIZE = 1000;
 
 const BandsScreen = () => {
+  const [bands, setBands] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedLetter, setSelectedLetter] = useState("ALL");
   const [searchTerm, setSearchTerm] = useState("");
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  useEffect(() => {
+    const fetchAllBands = async () => {
+      let allBands = [];
+      let from = 0;
+      let keepGoing = true;
+
+      while (keepGoing) {
+        const to = from + PAGE_SIZE - 1;
+
+        const { data, error } = await supabase
+          .from("bands")
+          .select("*")
+          .order("name", { ascending: true })
+          .range(from, to);
+
+        if (error) {
+          console.error("Error fetching bands:", error);
+          setBands([]);
+          setLoading(false);
+          return;
+        }
+
+        const batch = data || [];
+        allBands = [...allBands, ...batch];
+
+        if (batch.length < PAGE_SIZE) {
+          keepGoing = false;
+        } else {
+          from += PAGE_SIZE;
+        }
+      }
+
+      console.log("Total bands fetched:", allBands.length);
+      setBands(allBands);
+      setLoading(false);
+    };
+
+    fetchAllBands();
+  }, []);
 
   const sortedBands = useMemo(() => {
     const uniqueBands = Object.values(
@@ -17,7 +61,7 @@ const BandsScreen = () => {
     );
 
     return uniqueBands.sort((a, b) => a.name.localeCompare(b.name));
-  }, []);
+  }, [bands]);
 
   const filteredBands = useMemo(() => {
     let filtered = sortedBands;
@@ -81,7 +125,9 @@ const BandsScreen = () => {
       </div>
 
       <div className="bands-directory-list">
-        {filteredBands.length > 0 ? (
+        {loading ? (
+          <p className="no-results">Loading bands...</p>
+        ) : filteredBands.length > 0 ? (
           filteredBands.map((band) => (
             <Link
               key={band.slug}

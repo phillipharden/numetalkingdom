@@ -1,0 +1,256 @@
+/*^ ADMIN */
+
+.admin-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.admin-card {
+  background: var(--charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.admin-title {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: var(--gold);
+}
+
+.admin-subtitle {
+  color: var(--silver);
+  margin-bottom: 20px;
+}
+
+.admin-status {
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 4px solid var(--gold);
+  padding: 12px 16px;
+  margin-bottom: 25px;
+  border-radius: 4px;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.admin-btn {
+  background: var(--gold);
+  color: #000;
+  border: none;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.2s ease;
+}
+
+.admin-btn:hover {
+  background: #e6b800;
+  transform: translateY(-1px);
+}
+
+.admin-btn-outline {
+  background: transparent;
+  border: 1px solid var(--silver);
+  color: var(--silver);
+}
+
+.admin-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-btn-danger {
+  background: #8b0000;
+  color: #fff;
+}
+
+.admin-btn-danger:hover {
+  background: #b00000;
+}
+
+.admin-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.admin-form-group {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-form-group label {
+  font-weight: 600;
+}
+
+.admin-form-group input,
+.admin-form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #111;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.admin-form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.admin-checkbox-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-band-list {
+  margin-bottom: 30px;
+}
+
+.admin-band-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.admin-band-item {
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.admin-band-item:hover {
+  border-color: var(--gold);
+}
+
+.admin-search {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 12px 0 16px;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 6px;
+}
+
+.admin-search:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.admin-image-preview {
+  display: block;
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+
+/*^ ADMIN LOGIN */
+
+.admin-login {
+  max-width: 520px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.admin-login-card {
+  background: var(--charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.admin-login-title {
+  font-size: 42px;
+  margin-bottom: 10px;
+  color: var(--gold);
+}
+
+.admin-login-subtitle {
+  color: var(--silver);
+  margin-bottom: 24px;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-login-field {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-login-field input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #111;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.admin-login-field input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.admin-login-btn {
+  background: var(--gold);
+  color: #000;
+  border: none;
+  padding: 12px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.2s ease;
+  justify-self: start;
+}
+
+.admin-login-btn:hover {
+  background: #e6b800;
+  transform: translateY(-1px);
+}
+
+.admin-login-message {
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 4px solid var(--gold);
+  border-radius: 4px;
+}
+
+@media (max-width: 767px) {
+  .admin-login {
+    margin: 40px auto;
+  }
+
+  .admin-login-card {
+    padding: 24px 20px;
+  }
+
+  .admin-login-title {
+    font-size: 34px;
+  }
+
+  .admin-login-btn {
+    width: 100%;
+    justify-self: stretch;
+  }
+}
