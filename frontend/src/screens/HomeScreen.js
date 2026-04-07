@@ -4,6 +4,7 @@ import BackgroundVideo from "../components/BackgroundVideo";
 import UpcomingReleases from "../components/UpcomingReleases";
 import SpotifyPlaylist from "../components/SpotifyPlaylist";
 import RecentArticles from "../components/RecentArticles";
+import LatestArticle from "../components/LatestArticle";
 
 const HomeScreen = () => {
   return (
@@ -39,10 +40,11 @@ const HomeScreen = () => {
                 </Link>
               </div>
             </div>
-            
+            <LatestArticle />
             <SpotifyPlaylist />
           </div>
           <div className="col-12 col-md-4">
+            
             <RecentArticles />
             <UpcomingReleases />
           </div>

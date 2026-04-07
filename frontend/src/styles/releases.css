@@ -4,6 +4,7 @@
   padding: 2rem 0;
   background: var(--charcoal);
   text-align: left;
+  border-radius: 12px;
 }
 
 .releases-page {
@@ -169,7 +170,6 @@
 }
 
 .release-title {
-  font-style: italic;
   color: var(--white);
 }
 
@@ -180,7 +180,7 @@
 
 .release-genre {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--silver);
 }
 
@@ -346,6 +346,31 @@
 
 
 
-.release-link--presave {
-  font-weight: 700;
+
+
+
+
+
+
+
+.release-item__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.release-item__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.release-item__actions {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.release-item__details {
+  margin-top: 0.35rem;
+  padding-left: 1rem;
 }

@@ -58,8 +58,8 @@ const AdminReleasesScreen = () => {
         type === "checkbox"
           ? checked
           : name === "priority"
-          ? Number(value)
-          : value,
+            ? Number(value)
+            : value,
     }));
   };
 
@@ -285,6 +285,17 @@ const AdminReleasesScreen = () => {
               name="slug"
               value={form.slug}
               onChange={handleChange}
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label>Presave Link</label>
+            <input
+              type="url"
+              name="presave"
+              value={form.presave}
+              onChange={handleChange}
+              placeholder="https://..."
             />
           </div>
 

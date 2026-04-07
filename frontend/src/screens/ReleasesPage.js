@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import RecentArticles from "../components/RecentArticles";
 
 import {
   formatReleaseHeading,
@@ -276,21 +277,7 @@ const renderReleaseItem = (release) => {
 
           <div className="col-12 col-md-4">
             <aside className="releases-sidebar">
-              <div className="releases-sidebar__card">
-                <h3>About This Page</h3>
-                <p>
-                  This page lists all upcoming Christian music releases and gives
-                  extra emphasis to Nu Metal Kingdom core coverage.
-                </p>
-              </div>
-
-              <div className="releases-sidebar__card">
-                <h3>Legend</h3>
-                <p>
-                  <span className="legend-swatch legend-swatch--nu-metal"></span>
-                  Nu Metal umbrella release
-                </p>
-              </div>
+              <RecentArticles />
             </aside>
           </div>
         </div>

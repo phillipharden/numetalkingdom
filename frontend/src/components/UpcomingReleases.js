@@ -74,19 +74,6 @@ const UpcomingReleases = () => {
     }
   };
 
-  const getUmbrellaBadgeText = (release) => {
-    if (!release.nu_metal_umbrella) return null;
-
-    switch (release.umbrella_category) {
-      case "nu-metal":
-        return "Spotlight";
-      case "adjacent":
-        return "Featured";
-      default:
-        return "Featured";
-    }
-  };
-
   const getReleaseItemClass = (release) => {
     let className = "release-item";
 
@@ -113,7 +100,6 @@ const UpcomingReleases = () => {
 
   const renderReleaseLinks = (release) => {
     const hasLinks =
-      release.presave ||
       release.spotify_url ||
       release.apple_url ||
       release.youtube_url;
@@ -122,17 +108,6 @@ const UpcomingReleases = () => {
 
     return (
       <div className="release-links">
-        {release.presave && (
-          <a
-            href={release.presave}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="release-link release-link--presave"
-          >
-            Pre-Save
-          </a>
-        )}
-
         {release.spotify_url && (
           <a
             href={release.spotify_url}
@@ -170,8 +145,6 @@ const UpcomingReleases = () => {
   };
 
   const renderReleaseItem = (release) => {
-    const badgeText = getUmbrellaBadgeText(release);
-
     return (
       <li key={release.id} className={getReleaseItemClass(release)}>
         <div className="release-item__top">
@@ -189,29 +162,27 @@ const UpcomingReleases = () => {
             <span className="release-title">{release.title}</span>
 
             <span className="release-meta">
-              {" "}
-              - {getTypeLabel(release.type)} [{release.label}]
+              - {getTypeLabel(release.type)}
+              {release.label && ` [${release.label}]`}
             </span>
           </div>
 
-          <div className="release-item__badges">
-            {badgeText && (
-              <span className="release-badge">
-                {badgeText}
-              </span>
-            )}
-
-            {release.featured && (
-              <span className="release-badge release-badge--featured">
-                Featured
-              </span>
-            )}
-          </div>
+          {release.presave && (
+            <div className="release-item__actions">
+              <a
+                href={release.presave}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="release-link release-link--presave"
+              >
+                Pre-Save
+              </a>
+            </div>
+          )}
         </div>
 
         {(release.genre ||
           release.notes ||
-          release.presave ||
           release.spotify_url ||
           release.apple_url ||
           release.youtube_url) && (
@@ -253,9 +224,6 @@ const UpcomingReleases = () => {
         <div className="upcoming-releases-header">
           <p className="section-kicker">New Music</p>
           <h2 className="section-title">Upcoming Releases</h2>
-          <p className="section-subtitle">
-            Nu metal umbrella releases are visually emphasized.
-          </p>
         </div>
 
         <div className="upcoming-releases-groups">

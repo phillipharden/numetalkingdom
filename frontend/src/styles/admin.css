@@ -346,3 +346,63 @@
   font-size: 14px;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+.admin-file-upload {
+  width: 100%;
+}
+
+.admin-file-input {
+  display: none;
+}
+
+.admin-file-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  background: #050505;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.admin-file-label:hover {
+  border-color: #c9a227;
+  background: #0a0a0a;
+}
+
+.admin-file-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  background: #c9a227;
+  color: #000;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.admin-file-text {
+  color: #bdbdbd;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

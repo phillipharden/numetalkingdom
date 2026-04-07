@@ -146,3 +146,33 @@
 .filter-btn:hover {
   background: #eee;
 }
+
+
+/* Band Directory Search */
+
+.bands-search-wrap {
+  margin-bottom: 25px;
+}
+
+.bands-search-input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 12px 14px;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.bands-search-input::placeholder {
+  color: #777;
+  text-transform: none;
+}
+
+.bands-search-input:focus {
+  outline: none;
+  border-color: #c9a227;
+  background: rgba(201, 162, 39, 0.05);
+}

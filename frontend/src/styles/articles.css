@@ -477,3 +477,70 @@
   height: 100% !important;
   border: 0;
 }
+
+
+
+
+
+
+.featured-latest-article-card {
+  background: var(--charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.featured-latest-article-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.featured-latest-article-title {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.featured-latest-article-title a {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.featured-latest-article-title a:hover {
+  color: var(--gold);
+}
+
+.featured-latest-article-artist,
+.featured-latest-article-date {
+  color: var(--silver);
+  margin-bottom: 10px;
+}
+
+.featured-latest-article-excerpt {
+  color: var(--white);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.featured-latest-article-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.featured-latest-article-button {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--gold);
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.featured-latest-article-button:hover {
+  color: var(--white);
+}
