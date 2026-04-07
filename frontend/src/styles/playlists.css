@@ -4,130 +4,159 @@
   color: var(--silver);
 }
 
+/* Header */
+
 .page-title {
   margin-bottom: 10px;
 }
 
 .page-subtitle {
   max-width: 720px;
-  margin: 0 auto;
-  color: rgba(255, 255, 255, 0.75);
+  margin: 0 auto 40px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.section-title {
-  margin-bottom: 20px;
-}
+
+/* Playlist Card */
 
 .playlist-card {
-  height: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-}
-
-.playlist-card.featured {
+  background: var(--charcoal);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
   padding: 20px;
+  transition: all 0.25s ease;
 }
 
-.playlist-image-wrap {
-  width: 100%;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.03);
+.playlist-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201,162,39,0.35);
 }
+
+
+/* Image */
 
 .playlist-image {
-  display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
 }
 
-.playlist-content {
-  padding: 20px;
-}
+
+/* Title */
 
 .playlist-title {
-  font-size: 1.35rem;
-  margin-bottom: 12px;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
   color: #fff;
 }
+
+
+/* Description */
 
 .playlist-description {
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 18px;
   line-height: 1.6;
-  margin-bottom: 0;
 }
+
+
+/* Buttons */
 
 .playlist-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  margin-bottom: 18px;
 }
 
-.playlist-btn {
+/* .playlist-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 10px 18px;
+  gap: 8px;
+  padding: 10px 20px;
   border-radius: 999px;
+  font-weight: 600;
   text-decoration: none;
-  font-weight: 700;
+  background: linear-gradient(
+    135deg,
+    var(--blood-red),
+    #8b0000
+  );
   color: #fff;
-  background: var(--blood-red);
-  border: 1px solid transparent;
+  border: 1px solid rgba(255,255,255,0.08);
   transition: all 0.25s ease;
 }
 
 .playlist-btn:hover {
+  background: linear-gradient(
+    135deg,
+    var(--gold),
+    #e0b93f
+  );
+  color: #000;
   transform: translateY(-2px);
-  color: #fff;
-  background: var(--gold);
-}
+  box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+} */
 
-.platform-badge {
-  display: inline-block;
-  padding: 6px 12px;
+
+
+.playlist-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
   border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  text-decoration: none;
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  transition: all 0.25s ease;
+  margin-bottom: 5px;
+  transition: all 0.4s ease;
 }
 
-.platform-badge.spotify {
-  background: rgba(29, 185, 84, 0.2);
-  border: 1px solid rgba(29, 185, 84, 0.45);
+.playlist-btn:hover {
+  background: var(--gold);
+  color: #000;
+  transform: translateY(-2px);
 }
 
-.platform-badge.apple {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
 
-.platform-badge.youtube {
-  background: rgba(255, 0, 0, 0.18);
-  border: 1px solid rgba(255, 0, 0, 0.35);
-}
+
+/* Embed */
 
 .playlist-embed iframe {
   width: 100%;
   min-height: 352px;
+  border-radius: 12px;
 }
 
-@media (max-width: 767px) {
-  .playlist-card.featured {
-    padding: 0;
-  }
 
-  .playlist-content {
+/* Platform Badge */
+
+.platform-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 5px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,0.12);
+}
+
+.platform-badge.spotify {
+  background: rgba(29,185,84,0.18);
+  border: 1px solid rgba(29,185,84,0.4);
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .playlist-card {
     padding: 18px;
   }
 
   .playlist-title {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 }
