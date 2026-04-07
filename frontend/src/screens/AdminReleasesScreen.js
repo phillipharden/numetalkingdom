@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
 const emptyForm = {
@@ -24,12 +25,30 @@ const emptyForm = {
 const AdminReleasesScreen = () => {
   const [releases, setReleases] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState("");
 
   const [form, setForm] = useState(emptyForm);
 
+  const [showReleases, setShowReleases] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const filteredReleases = useMemo(() => {
+    const term = search.trim().toLowerCase();
+
+    if (!term) return releases;
+
+    return releases.filter((release) => {
+      const artist = (release.artist || "").toLowerCase();
+      const title = (release.title || "").toLowerCase();
+      return artist.includes(term) || title.includes(term);
+    });
+  }, [releases, search]);
+
   const fetchReleases = async () => {
+    setLoading(true);
+
     const { data, error } = await supabase
       .from("releases")
       .select("*")
@@ -66,6 +85,7 @@ const AdminReleasesScreen = () => {
   const resetForm = () => {
     setForm({ ...emptyForm });
     setEditingId(null);
+    setMessage("Ready.");
   };
 
   const handleImageUpload = async (e) => {
@@ -106,30 +126,32 @@ const AdminReleasesScreen = () => {
       cover_url: data.publicUrl,
     }));
 
-    setMessage("Image uploaded successfully. Click Update Release to save it.");
+    setMessage("Image uploaded successfully. Save the release to keep it.");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setMessage("");
 
     const payload = {
-      artist: form.artist,
-      title: form.title,
+      artist: form.artist.trim(),
+      title: form.title.trim(),
       type: form.type,
-      label: form.label,
+      label: form.label.trim(),
       release_date: form.release_date,
-      genre: form.genre,
-      slug: form.slug,
+      genre: form.genre.trim(),
+      slug: form.slug.trim(),
       featured: form.featured,
       nu_metal_umbrella: form.nu_metal_umbrella,
       umbrella_category: form.umbrella_category,
       priority: Number(form.priority) || 1,
-      presave: form.presave,
-      spotify_url: form.spotify_url,
-      apple_url: form.apple_url,
-      youtube_url: form.youtube_url,
-      notes: form.notes,
-      cover_url: form.cover_url,
+      presave: form.presave.trim(),
+      spotify_url: form.spotify_url.trim(),
+      apple_url: form.apple_url.trim(),
+      youtube_url: form.youtube_url.trim(),
+      notes: form.notes.trim(),
+      cover_url: form.cover_url.trim(),
     };
 
     let result;
@@ -140,14 +162,13 @@ const AdminReleasesScreen = () => {
         .update(payload)
         .eq("id", editingId);
     } else {
-      result = await supabase
-        .from("releases")
-        .insert([payload]);
+      result = await supabase.from("releases").insert([payload]);
     }
 
     if (result.error) {
       console.error("Save release error:", result.error);
       setMessage(result.error.message);
+      setSaving(false);
       return;
     }
 
@@ -157,6 +178,7 @@ const AdminReleasesScreen = () => {
 
     resetForm();
     await fetchReleases();
+    setSaving(false);
   };
 
   const handleEdit = (release) => {
@@ -182,15 +204,17 @@ const AdminReleasesScreen = () => {
 
     setEditingId(release.id);
     setMessage(`Editing ${release.artist} — ${release.title}`);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this release?")) return;
 
-    const { error } = await supabase
-      .from("releases")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("releases").delete().eq("id", id);
 
     if (error) {
       console.error("Delete release error:", error);
@@ -199,217 +223,386 @@ const AdminReleasesScreen = () => {
     }
 
     setMessage("Release deleted successfully.");
+
     if (editingId === id) {
       resetForm();
     }
+
     await fetchReleases();
   };
 
   return (
-    <section className="admin-container">
-      <div className="admin-card">
-        <h1 className="admin-title">Manage Releases</h1>
-
-        {message && (
-          <div className="admin-status">
-            <strong>Status:</strong> {message}
+    <section className="admin-shell">
+      <div className="admin-panel">
+        <div className="admin-page-header">
+          <div>
+            <Link to="/admin" className="admin-back-link">
+              ← Back to Admin Dashboard
+            </Link>
+            <p className="admin-eyebrow">Content Manager</p>
+            <h1 className="admin-page-title">Manage Releases</h1>
+            <p className="admin-page-subtitle">
+              Add new releases, edit existing entries, and manage cover images and platform links.
+            </p>
           </div>
-        )}
+        </div>
 
-        <form onSubmit={handleSubmit} className="admin-form">
-          <div className="admin-form-group">
-            <label>Artist</label>
-            <input
-              name="artist"
-              value={form.artist}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        {message && <div className="admin-status">{message}</div>}
 
-          <div className="admin-form-group">
-            <label>Title</label>
-            <input
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <div className="admin-toolbar">
+          <button
+            type="button"
+            className="admin-btn admin-btn-outline"
+            onClick={() => setShowReleases((prev) => !prev)}
+          >
+            {showReleases ? "Hide Existing Releases" : "Show Existing Releases"}
+          </button>
+        </div>
 
-          <div className="admin-form-group">
-            <label>Release Date</label>
-            <input
-              type="date"
-              name="release_date"
-              value={form.release_date}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        {showReleases && (
+          <div className="admin-section-card">
+            <div className="admin-section-header">
+              <h2>Existing Releases</h2>
+              <p>Search and select a release to edit.</p>
+            </div>
 
-          <div className="admin-form-group">
-            <label>Type</label>
-            <select
-              name="type"
-              value={form.type}
-              onChange={handleChange}
-            >
-              <option value="single">Single</option>
-              <option value="ep">EP</option>
-              <option value="album">Album</option>
-            </select>
-          </div>
-
-          <div className="admin-form-group">
-            <label>Label</label>
-            <input
-              name="label"
-              value={form.label}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="admin-form-group">
-            <label>Genre</label>
-            <input
-              name="genre"
-              value={form.genre}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="admin-form-group">
-            <label>Slug</label>
-            <input
-              name="slug"
-              value={form.slug}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="admin-form-group">
-            <label>Presave Link</label>
-            <input
-              type="url"
-              name="presave"
-              value={form.presave}
-              onChange={handleChange}
-              placeholder="https://..."
-            />
-          </div>
-
-          <div className="admin-form-group">
-            <label>Release Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-          </div>
-
-          {form.cover_url && (
             <div className="admin-form-group">
-              <label>Preview</label>
-              <img
-                src={form.cover_url}
-                alt="Preview"
-                className="admin-image-preview"
+              <label htmlFor="release-search">Search Releases</label>
+              <input
+                id="release-search"
+                type="text"
+                className="admin-search"
+                placeholder="Search by artist or title..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-          )}
 
-          <div className="admin-form-group">
-            <label>Image URL</label>
-            <input
-              name="cover_url"
-              value={form.cover_url}
-              onChange={handleChange}
-            />
-          </div>
+            {loading ? (
+              <p className="admin-muted-text">Loading releases...</p>
+            ) : filteredReleases.length === 0 ? (
+              <p className="admin-muted-text">No releases found.</p>
+            ) : (
+              <div className="admin-item-grid">
+                {filteredReleases.map((release) => (
+                  <div key={release.id} className="admin-item-card">
+                    <div className="admin-item-card__content">
+                      {release.cover_url ? (
+                        <img
+                          src={release.cover_url}
+                          alt={`${release.artist} ${release.title} cover`}
+                          className="admin-item-thumb"
+                        />
+                      ) : null}
 
-          <div className="admin-checkbox-row">
-            <label>
-              <input
-                type="checkbox"
-                name="featured"
-                checked={form.featured}
-                onChange={handleChange}
-              />
-              Featured
-            </label>
+                      <div>
+                        <strong>
+                          {release.artist} — {release.title}
+                        </strong>
+                        <span>
+                          {release.release_date || "No date"} · {release.type || "release"}
+                        </span>
+                        {release.slug ? <span>Slug: {release.slug}</span> : null}
+                      </div>
+                    </div>
 
-            <label>
-              <input
-                type="checkbox"
-                name="nu_metal_umbrella"
-                checked={form.nu_metal_umbrella}
-                onChange={handleChange}
-              />
-              Nu Metal Umbrella
-            </label>
-          </div>
+                    <div className="admin-item-card__actions">
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn-outline"
+                        onClick={() => handleEdit(release)}
+                      >
+                        Edit
+                      </button>
 
-          <div className="admin-form-group">
-            <label>Priority</label>
-            <input
-              type="number"
-              name="priority"
-              value={form.priority}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="admin-actions">
-            <button className="admin-btn">
-              {editingId ? "Update Release" : "Add Release"}
-            </button>
-
-            {editingId && (
-              <button
-                type="button"
-                onClick={resetForm}
-                className="admin-btn admin-btn-outline"
-              >
-                Cancel
-              </button>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn-danger"
+                        onClick={() => handleDelete(release.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-        </form>
-      </div>
+        )}
 
-      <div className="admin-card mt-4">
-        <h2>Existing Releases</h2>
+        <div className="admin-section-card">
+          <div className="admin-section-header">
+            <h2>{editingId ? "Edit Release" : "Add Release"}</h2>
+            <p>
+              {editingId
+                ? "Update the fields below and save your changes."
+                : "Fill out the fields below to add a new release."}
+            </p>
+          </div>
 
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <div className="admin-band-grid">
-            {releases.map((release) => (
-              <div key={release.id} className="admin-band-item">
-                <strong>{release.artist}</strong> — {release.title}
+          <form onSubmit={handleSubmit} className="admin-form">
+            <div className="admin-form-grid admin-form-grid--two">
+              <div className="admin-form-group">
+                <label htmlFor="artist">Artist</label>
+                <input
+                  id="artist"
+                  name="artist"
+                  type="text"
+                  value={form.artist}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-                <div className="admin-actions">
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(release)}
-                    className="admin-btn admin-btn-outline"
-                  >
-                    Edit
-                  </button>
+              <div className="admin-form-group">
+                <label htmlFor="title">Title</label>
+                <input
+                  id="title"
+                  name="title"
+                  type="text"
+                  value={form.title}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(release.id)}
-                    className="admin-btn admin-btn-danger"
-                  >
-                    Delete
-                  </button>
+              <div className="admin-form-group">
+                <label htmlFor="release_date">Release Date</label>
+                <input
+                  id="release_date"
+                  type="date"
+                  name="release_date"
+                  value={form.release_date}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label htmlFor="type">Type</label>
+                <select
+                  id="type"
+                  name="type"
+                  value={form.type}
+                  onChange={handleChange}
+                >
+                  <option value="single">Single</option>
+                  <option value="ep">EP</option>
+                  <option value="album">Album</option>
+                </select>
+              </div>
+
+              <div className="admin-form-group">
+                <label htmlFor="label">Label</label>
+                <input
+                  id="label"
+                  name="label"
+                  type="text"
+                  value={form.label}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label htmlFor="genre">Genre</label>
+                <input
+                  id="genre"
+                  name="genre"
+                  type="text"
+                  value={form.genre}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label htmlFor="slug">Slug</label>
+                <input
+                  id="slug"
+                  name="slug"
+                  type="text"
+                  value={form.slug}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label htmlFor="priority">Priority</label>
+                <input
+                  id="priority"
+                  type="number"
+                  name="priority"
+                  value={form.priority}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="admin-form-grid admin-form-grid--two">
+              <div className="admin-form-group">
+                <label htmlFor="presave">Presave Link</label>
+                <input
+                  id="presave"
+                  type="url"
+                  name="presave"
+                  value={form.presave}
+                  onChange={handleChange}
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label htmlFor="spotify_url">Spotify URL</label>
+                <input
+                  id="spotify_url"
+                  type="url"
+                  name="spotify_url"
+                  value={form.spotify_url}
+                  onChange={handleChange}
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label htmlFor="apple_url">Apple Music URL</label>
+                <input
+                  id="apple_url"
+                  type="url"
+                  name="apple_url"
+                  value={form.apple_url}
+                  onChange={handleChange}
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label htmlFor="youtube_url">YouTube URL</label>
+                <input
+                  id="youtube_url"
+                  type="url"
+                  name="youtube_url"
+                  value={form.youtube_url}
+                  onChange={handleChange}
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+
+            <div className="admin-form-grid admin-form-grid--two">
+              <div className="admin-form-group">
+                <label htmlFor="release_image">Release Image</label>
+                <div className="admin-file-upload">
+                  <label className="admin-file-label">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="admin-file-input"
+                    />
+
+                    <span className="admin-file-btn">
+                      Upload Image
+                    </span>
+
+                    <span className="admin-file-text">
+                      Choose an image file...
+                    </span>
+                  </label>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+
+              <div className="admin-form-group">
+                <label htmlFor="cover_url">Image URL</label>
+                <input
+                  id="cover_url"
+                  name="cover_url"
+                  type="url"
+                  value={form.cover_url}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            {form.cover_url && (
+              <div className="admin-form-group">
+                <label>Cover Preview</label>
+                <img
+                  src={form.cover_url}
+                  alt="Release cover preview"
+                  className="admin-image-preview"
+                />
+              </div>
+            )}
+
+            <div className="admin-form-group">
+              <label htmlFor="notes">Notes</label>
+              <textarea
+                id="notes"
+                name="notes"
+                rows="5"
+                value={form.notes}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="admin-form-grid admin-form-grid--two">
+              <div className="admin-form-group">
+                <label htmlFor="umbrella_category">Umbrella Category</label>
+                <select
+                  id="umbrella_category"
+                  name="umbrella_category"
+                  value={form.umbrella_category}
+                  onChange={handleChange}
+                >
+                  <option value="outside">Outside</option>
+                  <option value="adjacent">Adjacent</option>
+                  <option value="inside">Inside</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="admin-checkbox-row">
+              <label>
+                <input
+                  type="checkbox"
+                  name="featured"
+                  checked={form.featured}
+                  onChange={handleChange}
+                />
+                Featured
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="nu_metal_umbrella"
+                  checked={form.nu_metal_umbrella}
+                  onChange={handleChange}
+                />
+                Nu Metal Umbrella
+              </label>
+            </div>
+
+            <div className="admin-toolbar">
+              <button type="submit" className="admin-btn" disabled={saving}>
+                {saving
+                  ? "Saving..."
+                  : editingId
+                    ? "Update Release"
+                    : "Add Release"}
+              </button>
+
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="admin-btn admin-btn-outline"
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
     </section>
   );

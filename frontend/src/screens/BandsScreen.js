@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import RecentArticles from "../components/RecentArticles";
+import UpcomingReleases from "../components/UpcomingReleases";
 
 const PAGE_SIZE = 1000;
 
@@ -85,61 +87,84 @@ const BandsScreen = () => {
   }, [selectedLetter, searchTerm, sortedBands]);
 
   return (
-    <section className="bands-directory container py-5">
-      <h1 className="page-title">Band Directory</h1>
+    <section className="bands-directory py-5">
+      <div className="container">
+        <div className="row g-5">
+          <div className="col-12 col-xl-8">
+            <div className="bands-main">
+              <h1 className="page-title">Band Directory</h1>
 
-      <div className="bands-search-wrap mb-4">
-        <input
-          type="text"
-          className="bands-search-input"
-          placeholder="Search bands..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
+              <div className="bands-search-wrap mb-4">
+                <input
+                  type="text"
+                  className="bands-search-input"
+                  placeholder="Search bands..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
 
-      <div className="bands-filter mb-4">
-        <button
-          onClick={() => setSelectedLetter("ALL")}
-          className={`filter-btn ${selectedLetter === "ALL" ? "active" : ""}`}
-        >
-          All
-        </button>
+              <div className="bands-filter mb-4">
+                <button
+                  onClick={() => setSelectedLetter("ALL")}
+                  className={`filter-btn ${
+                    selectedLetter === "ALL" ? "active" : ""
+                  }`}
+                >
+                  All
+                </button>
 
-        <button
-          onClick={() => setSelectedLetter("0-9")}
-          className={`filter-btn ${selectedLetter === "0-9" ? "active" : ""}`}
-        >
-          0-9
-        </button>
+                <button
+                  onClick={() => setSelectedLetter("0-9")}
+                  className={`filter-btn ${
+                    selectedLetter === "0-9" ? "active" : ""
+                  }`}
+                >
+                  0-9
+                </button>
 
-        {alphabet.map((letter) => (
-          <button
-            key={letter}
-            onClick={() => setSelectedLetter(letter)}
-            className={`filter-btn ${selectedLetter === letter ? "active" : ""}`}
-          >
-            {letter}
-          </button>
-        ))}
-      </div>
+                {alphabet.map((letter) => (
+                  <button
+                    key={letter}
+                    onClick={() => setSelectedLetter(letter)}
+                    className={`filter-btn ${
+                      selectedLetter === letter ? "active" : ""
+                    }`}
+                  >
+                    {letter}
+                  </button>
+                ))}
+              </div>
 
-      <div className="bands-directory-list">
-        {loading ? (
-          <p className="no-results">Loading bands...</p>
-        ) : filteredBands.length > 0 ? (
-          filteredBands.map((band) => (
-            <Link
-              key={band.slug}
-              to={`/bands/${band.slug}`}
-              className="bands-directory-link"
-            >
-              {band.name}
-            </Link>
-          ))
-        ) : (
-          <p className="no-results">No bands found.</p>
-        )}
+              <div className="bands-directory-list">
+                {loading ? (
+                  <p className="no-results">Loading bands...</p>
+                ) : filteredBands.length > 0 ? (
+                  filteredBands.map((band) => (
+                    <Link
+                      key={band.slug}
+                      to={`/bands/${band.slug}`}
+                      className="bands-directory-link"
+                    >
+                      {band.name}
+                    </Link>
+                  ))
+                ) : (
+                  <p className="no-results">No bands found.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="col-12 col-xl-4">
+            <aside className="bands-sidebar">
+              <RecentArticles limit={4} />
+              <div className="mt-5">
+                <UpcomingReleases limit={5} />
+              </div>
+            </aside>
+          </div>
+        </div>
       </div>
     </section>
   );

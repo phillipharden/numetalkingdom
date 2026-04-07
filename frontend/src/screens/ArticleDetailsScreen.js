@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import ArticleDetails from "../components/ArticleDetails";
+import RecentArticles from "../components/RecentArticles";
+import UpcomingReleases from "../components/UpcomingReleases";
 
 const ArticleDetailsScreen = () => {
   const { slug } = useParams();
@@ -52,7 +54,7 @@ const ArticleDetailsScreen = () => {
 
   if (loading) {
     return (
-      <section className="py-6">
+      <section className="article-details-page py-6">
         <div className="container">
           <h1>Loading Article...</h1>
         </div>
@@ -62,20 +64,37 @@ const ArticleDetailsScreen = () => {
 
   if (!article) {
     return (
-      <section className="py-6">
+      <section className="article-details-page py-6">
         <div className="container">
           <h1>Article Not Found</h1>
           <p>We couldn’t find that article.</p>
-          <p><strong>Slug:</strong> {cleanSlug}</p>
+          <p>
+            <strong>Slug:</strong> {cleanSlug}
+          </p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-6">
+    <section className="article-details-page py-6">
       <div className="container">
-        <ArticleDetails article={article} />
+        <div className="row g-5">
+          <div className="col-12 col-xl-8">
+            <div className="article-details-main">
+              <ArticleDetails article={article} />
+            </div>
+          </div>
+
+          <div className="col-12 col-xl-4">
+            <aside className="article-details-sidebar">
+              <RecentArticles limit={4} />
+              <div className="mt-5">
+                <UpcomingReleases limit={5} />
+              </div>
+            </aside>
+          </div>
+        </div>
       </div>
     </section>
   );

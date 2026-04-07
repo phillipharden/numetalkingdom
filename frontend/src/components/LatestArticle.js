@@ -33,9 +33,7 @@ const LatestArticle = () => {
   if (loading) {
     return (
       <section className="featured-latest-article">
-        <div>
-          <p>Loading latest article...</p>
-        </div>
+        <p>Loading latest article...</p>
       </section>
     );
   }
@@ -45,63 +43,49 @@ const LatestArticle = () => {
   }
 
   const imageUrl =
-    article.card_image ||
-    article.og_image_url ||
-    article.bottom_image_url ||
-    "";
+    article.card_image || article.og_image_url || article.bottom_image_url || "";
 
   return (
     <section className="featured-latest-article">
-      
-        <div className="featured-latest-article-card">
-          <div className="row align-items-center">
-            {imageUrl && (
-              <div className="col-12 col-md-6 mb-4 mb-md-0">
-                <Link to={`/articles/${article.slug}`}>
-                  <img
-                    src={imageUrl}
-                    alt={article.card_image_alt || article.title}
-                    className="featured-latest-article-image"
-                  />
-                </Link>
-              </div>
-            )}
+      <div className="featured-latest-article-card">
+        <p className="featured-latest-article-label">Newest Article</p>
 
-            <div className={imageUrl ? "col-12 col-md-6" : "col-12"}>
-              <p className="featured-latest-article-label">Newest Article</p>
+        <h2 className="featured-latest-article-title">
+          <Link to={`/articles/${article.slug}`}>{article.title}</Link>
+        </h2>
 
-              <h2 className="featured-latest-article-title">
-                <Link to={`/articles/${article.slug}`}>
-                  {article.title}
-                </Link>
-              </h2>
+        {article.artist && (
+          <p className="featured-latest-article-artist">{article.artist}</p>
+        )}
 
-              {article.artist && (
-                <p className="featured-latest-article-artist">
-                  {article.artist}
-                </p>
-              )}
+        {article.date && (
+          <p className="featured-latest-article-date">{article.date}</p>
+        )}
 
-              {article.date && (
-                <p className="featured-latest-article-date">{article.date}</p>
-              )}
+        {imageUrl && (
+          <Link
+            to={`/articles/${article.slug}`}
+            className="featured-latest-article-image-link"
+          >
+            <img
+              src={imageUrl}
+              alt={article.card_image_alt || article.title}
+              className="featured-latest-article-image"
+            />
+          </Link>
+        )}
 
-              {article.excerpt && (
-                <p className="featured-latest-article-excerpt">
-                  {article.excerpt}
-                </p>
-              )}
+        {article.excerpt && (
+          <p className="featured-latest-article-excerpt">{article.excerpt}</p>
+        )}
 
-              <Link
-                to={`/articles/${article.slug}`}
-                className="featured-latest-article-button"
-              >
-                Read Article →
-              </Link>
-            </div>
-          </div>
-        </div>
-      
+        <Link
+          to={`/articles/${article.slug}`}
+          className="featured-latest-article-button"
+        >
+          Read Article →
+        </Link>
+      </div>
     </section>
   );
 };

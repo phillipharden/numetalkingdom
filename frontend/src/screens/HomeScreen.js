@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import HeroImage from "../assets/images/logo.png";
 import BackgroundVideo from "../components/BackgroundVideo";
 import UpcomingReleases from "../components/UpcomingReleases";
 import SpotifyPlaylist from "../components/SpotifyPlaylist";

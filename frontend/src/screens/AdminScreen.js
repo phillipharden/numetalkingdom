@@ -2,6 +2,29 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
+const adminSections = [
+  {
+    title: "Bands",
+    description: "Add, edit, and delete bands.",
+    to: "/admin-bands",
+  },
+  {
+    title: "Releases",
+    description: "Manage upcoming and past releases.",
+    to: "/admin-releases",
+  },
+  {
+    title: "Articles",
+    description: "Create and manage articles.",
+    to: "/admin-articles",
+  },
+  {
+    title: "Playlists",
+    description: "Manage playlists.",
+    to: "/admin-playlists",
+  },
+];
+
 const AdminScreen = () => {
   const navigate = useNavigate();
 
@@ -19,13 +42,13 @@ const AdminScreen = () => {
         return;
       }
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .select("is_admin")
         .eq("id", user.id)
         .single();
 
-      if (!data?.is_admin) {
+      if (error || !data?.is_admin) {
         navigate("/");
         return;
       }
@@ -44,9 +67,10 @@ const AdminScreen = () => {
 
   if (loading) {
     return (
-      <section className="admin-container">
-        <div className="admin-card">
-          <h1>Loading Admin...</h1>
+      <section className="admin-shell">
+        <div className="admin-panel admin-panel--narrow">
+          <h1 className="admin-page-title">Loading Admin...</h1>
+          <p className="admin-page-subtitle">Checking access.</p>
         </div>
       </section>
     );
@@ -55,47 +79,41 @@ const AdminScreen = () => {
   if (!isAdmin) return null;
 
   return (
-    <section className="admin-container">
-      <div className="admin-card">
-
-        <h1 className="admin-title">Nu Metal Kingdom Admin</h1>
-        <p className="admin-subtitle">
-          Manage site content
-        </p>
-
-        <div className="admin-dashboard">
-
-          <Link to="/admin-bands" className="admin-dashboard-card">
-            <h3>Bands</h3>
-            <p>Add, edit, and delete bands</p>
-          </Link>
-
-          <Link to="/admin-releases" className="admin-dashboard-card">
-            <h3>Releases</h3>
-            <p>Manage upcoming and past releases</p>
-          </Link>
-
-          <Link to="/admin-articles" className="admin-dashboard-card">
-            <h3>Articles</h3>
-            <p>Create and manage articles</p>
-          </Link>
-
-          <Link to="/admin-playlists" className="admin-dashboard-card">
-            <h3>Playlists</h3>
-            <p>Manage playlists</p>
-          </Link>
-
+    <section className="admin-shell">
+      <div className="admin-panel">
+        <div className="admin-page-header">
+          <div>
+            <p className="admin-eyebrow">Admin Dashboard</p>
+            <h1 className="admin-page-title">Nu Metal Kingdom Admin</h1>
+            <p className="admin-page-subtitle">
+              Manage bands, releases, articles, and playlists.
+            </p>
+          </div>
         </div>
 
-        <div className="admin-actions mt-4">
+        <div className="admin-dashboard-grid">
+          {adminSections.map((section) => (
+            <Link
+              key={section.to}
+              to={section.to}
+              className="admin-dashboard-card"
+            >
+              <h2>{section.title}</h2>
+              <p>{section.description}</p>
+              <span className="admin-card-link-text">Open Section →</span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="admin-toolbar admin-toolbar--end">
           <button
+            type="button"
             onClick={handleLogout}
             className="admin-btn admin-btn-outline"
           >
             Log Out
           </button>
         </div>
-
       </div>
     </section>
   );

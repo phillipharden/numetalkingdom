@@ -1,11 +1,6 @@
-/*^ UPCOMING RELEASES / RELEASES PAGE */
-
-.upcoming-releases-section {
-  padding: 2rem 0;
-  background: var(--charcoal);
-  text-align: left;
-  border-radius: 12px;
-}
+/* =========================
+   RELEASES PAGE LAYOUT
+========================= */
 
 .releases-page {
   padding: 2rem 0 4rem;
@@ -14,318 +9,14 @@
 }
 
 .releases-main {
+  position: relative;
+  z-index: 2;
   text-align: left;
 }
-
-
-
-/*^ SECTION HEADER */
-
-.releases-page__header {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(234, 234, 234, 0.12);
-}
-
-.releases-page__kicker {
-  margin: 0 0 0.5rem;
-  color: var(--gold);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.releases-page__title {
-  margin: 0 0 0.5rem;
-  font-size: 2rem;
-  line-height: 1.2;
-}
-
-.releases-page__subtitle {
-  margin: 0;
-  color: var(--silver);
-}
-
-
-
-/*^ RELEASE DATE GROUPS */
-
-.release-date-group + .release-date-group {
-  margin-top: 2rem;
-}
-
-.release-date-heading {
-  margin: 0 0 1rem;
-  padding-bottom: 0.5rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--gold);
-  border-bottom: 1px solid rgba(201, 162, 39, 0.25);
-  text-align: left;
-}
-
-
-
-/*^ RELEASE TYPE HEADINGS */
-
-.release-group-block + .release-group-block {
-  margin-top: 1rem;
-}
-
-.release-type-heading {
-  margin: 0 0 0.75rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: left;
-}
-
-
-
-/*^ RELEASE LIST */
-
-.release-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  text-align: left;
-}
-
-.release-item {
-  margin: 0;
-  padding: 0.9rem 0;
-  border-bottom: 1px solid rgba(234, 234, 234, 0.08);
-  text-align: left;
-  line-height: 1.6;
-}
-
-.release-item--standard {
-  background: transparent;
-}
-
-.release-item--highlight {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.release-item--nu-metal {
-  padding-left: 0.75rem;
-  border-left: 3px solid var(--gold);
-  background: rgba(201, 162, 39, 0.04);
-}
-
-.release-item--adjacent {
-  padding-left: 0.75rem;
-  border-left: 3px solid rgba(255, 255, 255, 0.18);
-}
-
-
-
-/*^ RELEASE LAYOUT */
-
-.release-item__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.release-item__main {
-  display: block;
-  flex: 1;
-  min-width: 0;
-}
-
-.release-item__badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  justify-content: flex-end;
-}
-
-.release-item__details {
-  margin-top: 0.35rem;
-}
-
-
-
-/*^ RELEASE TEXT */
-
-.release-bullet {
-  display: inline-block;
-  margin-right: 0.15rem;
-  color: var(--white);
-}
-
-.release-artist {
-  font-weight: 700;
-  color: var(--white);
-}
-
-.release-artist--nu-metal {
-  color: var(--gold);
-  letter-spacing: 0.03em;
-  text-shadow: 0 0 6px rgba(201, 162, 39, 0.3);
-}
-
-.release-title {
-  color: var(--white);
-}
-
-.release-meta {
-  color: var(--silver);
-  opacity: 0.9;
-}
-
-.release-genre {
-  display: block;
-  font-size: 0.75rem;
-  color: var(--silver);
-}
-
-.release-notes {
-  margin: 0.35rem 0 0;
-  font-size: 0.9rem;
-  color: var(--silver);
-}
-
-
-
-/*^ BADGES */
-
-.release-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.18rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  margin:0 5px;
-}
-
-.release-badge--nu-metal {
-  color: var(--gold);
-  border: 1px solid var(--gold);
-  background: rgba(201, 162, 39, 0.12);
-}
-
-.release-badge--adjacent {
-  color: var(--white);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.release-badge--featured {
-  color: var(--black);
-  background: var(--gold);
-  border: 1px solid var(--gold);
-}
-
-
-
-/*^ LINKS */
-
-.release-links {
-  margin-top: 0.45rem;
-}
-
-.release-link {
-  display: inline-block;
-  margin-right: 0.6rem;
-  color: var(--gold);
-  text-decoration: none;
-  font-size: 0.85rem;
-  transition: color 0.2s ease;
-}
-
-.release-link:hover {
-  color: var(--white);
-}
-
-
-
-/*^ SEE MORE RELEASES */
-
-.see-more-releases {
-  margin-top: 30px;
-  text-align: center;
-}
-
-.see-more-link {
-  display: inline-block;
-  text-decoration: none;
-  font-size: 18px;
-  color: #ffffff;
-  transition: all 0.3s ease;
-}
-
-.see-more-link:hover {
-  color: var(--gold);
-}
-
-
-
-/*^ SIDEBAR */
 
 .releases-sidebar {
-  margin-top: 2rem;
-}
-
-.releases-sidebar__card {
-  padding: 1rem;
-  background: var(--charcoal);
-  border: 1px solid rgba(234, 234, 234, 0.08);
-  border-radius: 0.5rem;
-}
-
-.releases-sidebar__card + .releases-sidebar__card {
-  margin-top: 1rem;
-}
-
-.releases-sidebar__card h3 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  color: var(--gold);
-}
-
-
-
-/*^ LEGEND */
-
-.legend-swatch {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  margin-right: 0.5rem;
-  vertical-align: middle;
-}
-
-.legend-swatch--nu-metal {
-  background: rgba(201, 162, 39, 0.2);
-  border: 1px solid var(--gold);
-}
-
-
-
-/*^ RESPONSIVE */
-
-@media (max-width: 767px) {
-  .release-item__top {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .release-item__badges {
-    justify-content: flex-start;
-  }
-
-  .release-meta {
-    display: inline;
-  }
+  position: relative;
+  z-index: 2;
 }
 
 @media (min-width: 768px) {
@@ -335,28 +26,105 @@
 }
 
 
+/* =========================
+   SECTION HEADER
+========================= */
+
+.releases-page__header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(234,234,234,0.12);
+}
+
+.releases-page__kicker {
+  margin-bottom: 0.5rem;
+  color: var(--gold);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.releases-page__title {
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.releases-page__subtitle {
+  color: var(--silver);
+}
 
 
+/* =========================
+   RELEASE GROUPS
+========================= */
+
+.release-date-group + .release-date-group {
+  margin-top: 2rem;
+}
+
+.release-date-heading {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gold);
+  border-bottom: 1px solid rgba(201,162,39,0.25);
+}
+
+.release-group-block + .release-group-block {
+  margin-top: 1rem;
+}
+
+.release-type-heading {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
 
+/* =========================
+   RELEASE LIST
+========================= */
+
+.release-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.release-item {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(234,234,234,0.08);
+  line-height: 1.6;
+}
+
+.release-item--highlight {
+  background: rgba(255,255,255,0.02);
+}
+
+.release-item--nu-metal {
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--gold);
+  background: rgba(201,162,39,0.04);
+}
+
+.release-item--adjacent {
+  padding-left: 0.75rem;
+  border-left: 3px solid rgba(255,255,255,0.18);
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
+/* =========================
+   RELEASE LAYOUT
+========================= */
 
 .release-item__top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
 }
 
@@ -370,7 +138,204 @@
   white-space: nowrap;
 }
 
+.release-item__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 .release-item__details {
   margin-top: 0.35rem;
   padding-left: 1rem;
+}
+
+
+/* =========================
+   RELEASE TEXT
+========================= */
+
+.release-artist {
+  font-weight: 700;
+  color: var(--white);
+}
+
+.release-artist--nu-metal {
+  color: var(--gold);
+  letter-spacing: 0.03em;
+}
+
+.release-title {
+  color: var(--white);
+}
+
+.release-meta {
+  color: var(--silver);
+}
+
+.release-genre {
+  font-size: 0.75rem;
+  color: var(--silver);
+}
+
+.release-notes {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--silver);
+}
+
+
+/* =========================
+   BADGES
+========================= */
+
+.release-badge {
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.release-badge--nu-metal {
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  background: rgba(201,162,39,0.12);
+}
+
+.release-badge--adjacent {
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.05);
+}
+
+.release-badge--featured {
+  color: var(--black);
+  background: var(--gold);
+}
+
+
+/* =========================
+   LINKS
+========================= */
+
+.release-links {
+  margin-top: 0.45rem;
+}
+
+.release-link {
+  margin-right: 0.6rem;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: 0.2s ease;
+}
+
+.release-link:hover {
+  color: var(--white);
+}
+
+
+/* =========================
+   SEE MORE
+========================= */
+
+.see-more-releases {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.see-more-link {
+  font-size: 18px;
+  color: #fff;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.see-more-link:hover {
+  color: var(--gold);
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.releases-sidebar__card {
+  padding: 1rem;
+  background: var(--charcoal);
+  border: 1px solid rgba(234,234,234,0.08);
+  border-radius: 0.5rem;
+}
+
+.releases-sidebar__card + .releases-sidebar__card {
+  margin-top: 1rem;
+}
+
+.releases-sidebar__card h3 {
+  color: var(--gold);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 767px) {
+  .release-item__top {
+    flex-direction: column;
+  }
+
+  .release-item__badges {
+    justify-content: flex-start;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Release Cover */
+
+/* .release-cover {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.release-cover-wrap {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+} */
+
+
+
+
+
+
+.release-item__top {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.release-cover {
+  width: 75px;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 8px;
 }
