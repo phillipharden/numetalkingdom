@@ -32,15 +32,29 @@ const ArticleDetailsScreen = () => {
       } else {
         const normalizedArticle = data
           ? {
-              ...data,
-              cardImage: data.card_image || "",
-              cardImageAlt: data.card_image_alt || "",
-              contentHtml: data.content_html || "",
-              heroMedia: data.hero_media || {},
-              bottomImageUrl: data.bottom_image_url || "",
-              ogImageUrl: data.og_image_url || "",
-              video: data.video || {},
-            }
+            ...data,
+            cardImage: data.card_image || "",
+            cardImageAlt: data.card_image_alt || "",
+            contentHtml: data.content_html || "",
+            heroMedia: data.hero_media || {},
+            bottomImageUrl: data.bottom_image_url || "",
+            ogImageUrl: data.og_image_url || "",
+            video: data.video || {},
+
+            ctaText: data.cta_text || "",
+            ctaUrl: data.cta_url || "",
+
+            bandImage: data.band_image || "",
+            bandImageAlt: data.band_image_alt || "",
+            bandWebsite: data.band_website || "",
+            bandFacebook: data.band_facebook || "",
+            bandInstagram: data.band_instagram || "",
+            bandX: data.band_x || "",
+            bandYoutube: data.band_youtube || "",
+            bandSpotify: data.band_spotify || "",
+            bandAppleMusic: data.band_apple_music || "",
+            bandTiktok: data.band_tiktok || "",
+          }
           : null;
 
         setArticle(normalizedArticle);

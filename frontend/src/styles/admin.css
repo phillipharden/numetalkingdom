@@ -561,3 +561,68 @@
     flex-basis: auto;
   }
 }
+
+/* =========================
+   ADMIN ARTICLES SCREEN
+========================= */
+
+.admin-form-group textarea[name="content_html"] {
+  min-height: 320px;
+}
+
+.admin-form-group textarea[name="hero_media"],
+.admin-form-group textarea[name="video"] {
+  min-height: 180px;
+  font-family: monospace;
+  line-height: 1.5;
+}
+
+.admin-item-card__content > div {
+  min-width: 0;
+}
+
+.admin-item-card__content span {
+  word-break: break-word;
+}
+
+@media (max-width: 767px) {
+  .admin-page-header {
+    flex-direction: column;
+  }
+}
+
+
+.article-cta-wrap {
+  margin-top: 36px;
+  text-align: center;
+}
+
+.article-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+
+  color: var(--gold);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  transition: 
+    transform 0.18s ease,
+    color 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.article-cta-button:hover {
+  transform: translateY(-2px);
+  color: var(--white);
+  background: rgba(201, 162, 39, 0.08);
+  border-color: rgba(201, 162, 39, 0.45);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}

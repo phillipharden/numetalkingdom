@@ -24,6 +24,20 @@ const ArticleDetails = ({ article }) => {
     ogImageUrl,
     bottomImageUrl,
     video,
+
+    ctaText,
+    ctaUrl,
+
+    bandImage,
+    bandImageAlt,
+    bandWebsite,
+    bandFacebook,
+    bandInstagram,
+    bandX,
+    bandYoutube,
+    bandSpotify,
+    bandAppleMusic,
+    bandTiktok,
   } = article;
 
   const siteUrl = "https://numetalkingdom.com";
@@ -55,9 +69,16 @@ const ArticleDetails = ({ article }) => {
   const youtubeUrl = video?.url || "";
   const youtubeEmbedUrl = getYouTubeEmbedUrl(youtubeUrl);
 
-  console.log("ARTICLE VIDEO:", video);
-  console.log("YOUTUBE URL:", youtubeUrl);
-  console.log("YOUTUBE EMBED URL:", youtubeEmbedUrl);
+  const bandLinks = [
+    { label: "Website", url: bandWebsite },
+    { label: "Facebook", url: bandFacebook },
+    { label: "Instagram", url: bandInstagram },
+    { label: "X", url: bandX },
+    { label: "YouTube", url: bandYoutube },
+    { label: "Spotify", url: bandSpotify },
+    { label: "Apple Music", url: bandAppleMusic },
+    { label: "TikTok", url: bandTiktok },
+  ].filter((link) => link.url);
 
   return (
     <>
@@ -131,6 +152,57 @@ const ArticleDetails = ({ article }) => {
               className="article-bottom-image"
             />
           </div>
+        )}
+
+        {ctaText && ctaUrl && (
+          <div className="article-cta-wrap">
+            <a
+              href={ctaUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="article-cta-button"
+            >
+              {ctaText}
+            </a>
+          </div>
+        )}
+
+        {(bandImage || artist || bandLinks.length > 0) && (
+          <section className="article-band-section">
+            <h3 className="article-band-section-title">About the Artist</h3>
+
+            <div className="article-band-card">
+              {bandImage && (
+                <div className="article-band-image-wrap">
+                  <img
+                    src={bandImage}
+                    alt={bandImageAlt || artist || title}
+                    className="article-band-image"
+                  />
+                </div>
+              )}
+
+              <div className="article-band-content">
+                {artist && <h4 className="article-band-name">{artist}</h4>}
+
+                {bandLinks.length > 0 && (
+                  <div className="article-band-links">
+                    {bandLinks.map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="article-band-link"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
         )}
       </article>
     </>
