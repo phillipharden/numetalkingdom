@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-
 import UpcomingReleases from "../components/UpcomingReleases";
 
 const ArticlesScreen = () => {
@@ -41,15 +40,13 @@ const ArticlesScreen = () => {
     <section className="articles-screen py-6">
       <div className="container">
         <div className="row g-5">
-          
           <div className="col-12 col-xl-8">
             <div className="articles-main">
-
               <div className="articles-screen-header mb-5">
                 <p className="section-kicker">News / Features / Releases</p>
                 <h1>Articles</h1>
                 <p className="section-subtitle">
-                  The latest from Numetal Kingdom featuring new releases,
+                  The latest from Nu Metal Kingdom featuring new releases,
                   band news, interviews, and heavy music updates.
                 </p>
               </div>
@@ -67,13 +64,10 @@ const ArticlesScreen = () => {
                       >
                         <img
                           src={
-                            article.card_image ||
+                            article.banner_image_url ||
                             "/images/articles/default.jpg"
                           }
-                          alt={
-                            article.card_image_alt ||
-                            article.title
-                          }
+                          alt={article.title}
                           className="article-card-image"
                         />
                       </Link>
@@ -81,9 +75,7 @@ const ArticlesScreen = () => {
                       <div className="article-card-body">
                         <p className="article-card-meta">
                           <span>{article.category || "News"}</span>
-                          {article.date && (
-                            <span> • {article.date}</span>
-                          )}
+                          {article.date && <span> • {article.date}</span>}
                         </p>
 
                         <h2 className="article-card-title">
@@ -92,9 +84,9 @@ const ArticlesScreen = () => {
                           </Link>
                         </h2>
 
-                        {article.artist && (
+                        {article.band_name && (
                           <p className="article-card-artist">
-                            {article.artist}
+                            {article.band_name}
                           </p>
                         )}
 
@@ -115,20 +107,16 @@ const ArticlesScreen = () => {
                   </div>
                 ))}
               </div>
-
             </div>
           </div>
 
           <div className="col-12 col-xl-4">
             <aside className="articles-sidebar">
-             
-
               <div className="mt-5">
                 <UpcomingReleases limit={5} />
               </div>
             </aside>
           </div>
-
         </div>
       </div>
     </section>

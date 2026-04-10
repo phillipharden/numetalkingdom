@@ -2,12 +2,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
-import AdminLoginScreen from "./screens/AdminLoginScreen";
-import AdminScreen from "./screens/AdminScreen";
-import AdminBandsScreen from "./screens/AdminBandsScreen";
-import AdminReleasesScreen from "./screens/AdminReleasesScreen";
-import AdminArticlesScreen from "./screens/AdminArticlesScreen";
-import AdminPlaylistsScreen from "./screens/AdminPlaylistsScreen";
+import AdminLoginScreen from "./admin-screens/AdminLoginScreen";
+import AdminScreen from "./admin-screens/AdminScreen";
+import AdminBandsScreen from "./admin-screens/AdminBandsScreen";
+import AdminReleasesScreen from "./admin-screens/AdminReleasesScreen";
+import AdminArticlesScreen from "./admin-screens/AdminArticlesScreen";
+import AdminPlaylistsScreen from "./admin-screens/AdminPlaylistsScreen";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";

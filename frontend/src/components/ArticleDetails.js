@@ -12,41 +12,33 @@ const ArticleDetails = ({ article }) => {
 
   const {
     title,
-    artist,
+    slug,
     date,
     category,
-    heroMedia,
-    contentHtml,
     excerpt,
-    cardImage,
-    cardImageAlt,
-    slug,
-    ogImageUrl,
-    bottomImageUrl,
-    video,
-
-    ctaText,
-    ctaUrl,
-
-    bandImage,
-    bandImageAlt,
-    bandWebsite,
-    bandFacebook,
-    bandInstagram,
-    bandX,
-    bandYoutube,
-    bandSpotify,
-    bandAppleMusic,
-    bandTiktok,
+    content_html,
+    banner_image_url,
+    footer_media_type,
+    footer_image_url,
+    footer_youtube_url,
+    cta_label,
+    cta_url,
+    band_name,
+    band_image_url,
+    band_website,
+    band_facebook,
+    band_instagram,
+    band_x,
+    band_youtube,
+    band_spotify,
+    band_apple_music,
+    band_tiktok,
   } = article;
 
   const siteUrl = "https://numetalkingdom.com";
   const articleUrl = `${siteUrl}/articles/${slug}`;
-
   const shareImage =
-    ogImageUrl || cardImage || `${siteUrl}/images/articles/default.jpg`;
-
-  const heroImageUrl = heroMedia?.url || heroMedia?.src || "";
+    banner_image_url || `${siteUrl}/images/articles/default.jpg`;
 
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return "";
@@ -66,18 +58,20 @@ const ArticleDetails = ({ article }) => {
     return "";
   };
 
-  const youtubeUrl = video?.url || "";
-  const youtubeEmbedUrl = getYouTubeEmbedUrl(youtubeUrl);
+  const footerYouTubeEmbedUrl =
+    footer_media_type === "youtube"
+      ? getYouTubeEmbedUrl(footer_youtube_url)
+      : "";
 
   const bandLinks = [
-    { label: "Website", url: bandWebsite },
-    { label: "Facebook", url: bandFacebook },
-    { label: "Instagram", url: bandInstagram },
-    { label: "X", url: bandX },
-    { label: "YouTube", url: bandYoutube },
-    { label: "Spotify", url: bandSpotify },
-    { label: "Apple Music", url: bandAppleMusic },
-    { label: "TikTok", url: bandTiktok },
+    { label: "Website", url: band_website },
+    { label: "Facebook", url: band_facebook },
+    { label: "Instagram", url: band_instagram },
+    { label: "X", url: band_x },
+    { label: "YouTube", url: band_youtube },
+    { label: "Spotify", url: band_spotify },
+    { label: "Apple Music", url: band_apple_music },
+    { label: "TikTok", url: band_tiktok },
   ].filter((link) => link.url);
 
   return (
@@ -92,7 +86,7 @@ const ArticleDetails = ({ article }) => {
         <meta property="og:description" content={excerpt || title} />
         <meta property="og:url" content={articleUrl} />
         <meta property="og:image" content={shareImage} />
-        <meta property="og:image:alt" content={cardImageAlt || title} />
+        <meta property="og:image:alt" content={title} />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
@@ -112,78 +106,80 @@ const ArticleDetails = ({ article }) => {
 
         <h1 className="article-title">{title}</h1>
 
-        {artist && <div className="article-artist">{artist}</div>}
+        {band_name && <div className="article-artist">{band_name}</div>}
 
-        {youtubeEmbedUrl ? (
-          <div className="article-hero">
-            <div className="article-video">
-              <iframe
-                className="article-video-embed"
-                src={youtubeEmbedUrl}
-                title={title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        ) : heroImageUrl ? (
+        {banner_image_url && (
           <div className="article-hero">
             <img
-              src={heroImageUrl}
-              alt={heroMedia?.alt || cardImageAlt || title}
+              src={banner_image_url}
+              alt={title}
               className="article-hero-image"
             />
           </div>
-        ) : null}
+        )}
 
-        {contentHtml && (
+        {content_html && (
           <div
             className="article-content"
-            dangerouslySetInnerHTML={{ __html: contentHtml }}
+            dangerouslySetInnerHTML={{ __html: content_html }}
           />
         )}
 
-        {bottomImageUrl && (
+        {footer_media_type === "image" && footer_image_url && (
           <div className="article-bottom-image-wrap">
             <img
-              src={bottomImageUrl}
+              src={footer_image_url}
               alt={title}
               className="article-bottom-image"
             />
           </div>
         )}
 
-        {ctaText && ctaUrl && (
+        {footer_media_type === "youtube" && footerYouTubeEmbedUrl && (
+          <div className="article-bottom-video-wrap">
+            <div className="article-video">
+              <iframe
+                className="article-video-embed"
+                src={footerYouTubeEmbedUrl}
+                title={`${title} video`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
+
+        {cta_label && cta_url && (
           <div className="article-cta-wrap">
             <a
-              href={ctaUrl}
+              href={cta_url}
               target="_blank"
               rel="noreferrer"
               className="article-cta-button"
             >
-              {ctaText}
+              {cta_label}
             </a>
           </div>
         )}
 
-        {(bandImage || artist || bandLinks.length > 0) && (
+        {(band_image_url || band_name || bandLinks.length > 0) && (
           <section className="article-band-section">
             <h3 className="article-band-section-title">About the Artist</h3>
 
             <div className="article-band-card">
-              {bandImage && (
+              {band_image_url && (
                 <div className="article-band-image-wrap">
                   <img
-                    src={bandImage}
-                    alt={bandImageAlt || artist || title}
+                    src={band_image_url}
+                    alt={band_name || title}
                     className="article-band-image"
                   />
                 </div>
               )}
 
               <div className="article-band-content">
-                {artist && <h4 className="article-band-name">{artist}</h4>}
+                {band_name && <h4 className="article-band-name">{band_name}</h4>}
 
                 {bandLinks.length > 0 && (
                   <div className="article-band-links">

@@ -14,8 +14,7 @@ const ArticleDetailsScreen = () => {
 
   useEffect(() => {
     const fetchArticle = async () => {
-      console.log("URL slug:", slug);
-      console.log("Clean slug:", cleanSlug);
+      setLoading(true);
 
       const { data, error } = await supabase
         .from("articles")
@@ -23,48 +22,18 @@ const ArticleDetailsScreen = () => {
         .eq("slug", cleanSlug)
         .maybeSingle();
 
-      console.log("SUPABASE DATA:", data);
-      console.log("SUPABASE ERROR:", error);
-
       if (error) {
         console.error("Error loading article:", error);
         setArticle(null);
       } else {
-        const normalizedArticle = data
-          ? {
-            ...data,
-            cardImage: data.card_image || "",
-            cardImageAlt: data.card_image_alt || "",
-            contentHtml: data.content_html || "",
-            heroMedia: data.hero_media || {},
-            bottomImageUrl: data.bottom_image_url || "",
-            ogImageUrl: data.og_image_url || "",
-            video: data.video || {},
-
-            ctaText: data.cta_text || "",
-            ctaUrl: data.cta_url || "",
-
-            bandImage: data.band_image || "",
-            bandImageAlt: data.band_image_alt || "",
-            bandWebsite: data.band_website || "",
-            bandFacebook: data.band_facebook || "",
-            bandInstagram: data.band_instagram || "",
-            bandX: data.band_x || "",
-            bandYoutube: data.band_youtube || "",
-            bandSpotify: data.band_spotify || "",
-            bandAppleMusic: data.band_apple_music || "",
-            bandTiktok: data.band_tiktok || "",
-          }
-          : null;
-
-        setArticle(normalizedArticle);
+        setArticle(data || null);
       }
 
       setLoading(false);
     };
 
     fetchArticle();
-  }, [slug, cleanSlug]);
+  }, [cleanSlug]);
 
   if (loading) {
     return (

@@ -42,8 +42,7 @@ const LatestArticle = () => {
     return null;
   }
 
-  const imageUrl =
-    article.card_image || article.og_image_url || article.bottom_image_url || "";
+  const imageUrl = article.banner_image_url || "";
 
   return (
     <section className="featured-latest-article">
@@ -54,8 +53,8 @@ const LatestArticle = () => {
           <Link to={`/articles/${article.slug}`}>{article.title}</Link>
         </h2>
 
-        {article.artist && (
-          <p className="featured-latest-article-artist">{article.artist}</p>
+        {article.band_name && (
+          <p className="featured-latest-article-artist">{article.band_name}</p>
         )}
 
         {article.date && (
@@ -69,7 +68,7 @@ const LatestArticle = () => {
           >
             <img
               src={imageUrl}
-              alt={article.card_image_alt || article.title}
+              alt={article.title}
               className="featured-latest-article-image"
             />
           </Link>

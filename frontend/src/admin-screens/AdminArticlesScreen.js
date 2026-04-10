@@ -1,26 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { Link, useNavigate } from "react-router-dom";
+
+const ARTICLE_IMAGE_BUCKET = "article-images";
 
 const emptyForm = {
   title: "",
   slug: "",
-  artist: "",
   date: "",
   category: "",
   excerpt: "",
   content_html: "",
-  card_image: "",
-  card_image_alt: "",
-  hero_media: "",
-  og_image_url: "",
-  bottom_image_url: "",
-  video: "",
-
-  cta_text: "",
+  banner_image_url: "",
+  footer_media_type: "none",
+  footer_image_url: "",
+  footer_youtube_url: "",
+  cta_label: "",
   cta_url: "",
-
-  band_image: "",
-  band_image_alt: "",
+  band_name: "",
+  band_image_url: "",
   band_website: "",
   band_facebook: "",
   band_instagram: "",
@@ -37,6 +35,7 @@ const AdminArticlesScreen = () => {
   const [editingArticle, setEditingArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingField, setUploadingField] = useState("");
   const [message, setMessage] = useState("");
 
   const sortedArticles = useMemo(() => {
@@ -74,6 +73,7 @@ const AdminArticlesScreen = () => {
     setFormData(emptyForm);
     setEditingArticle(null);
     setMessage("");
+    setUploadingField("");
   };
 
   const slugify = (value) => {
@@ -83,29 +83,6 @@ const AdminArticlesScreen = () => {
       .replace(/['"]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
-  };
-
-  const safeParseJson = (value, fallback = {}) => {
-    if (!value || !value.trim()) return fallback;
-
-    try {
-      return JSON.parse(value);
-    } catch {
-      throw new Error(
-        "One of your JSON fields is invalid. Please check Hero Media or Video."
-      );
-    }
-  };
-
-  const formatJsonForTextarea = (value) => {
-    if (!value) return "";
-    if (typeof value === "string") return value;
-
-    try {
-      return JSON.stringify(value, null, 2);
-    } catch {
-      return "";
-    }
   };
 
   const handleChange = (e) => {
@@ -121,6 +98,14 @@ const AdminArticlesScreen = () => {
         updated.slug = slugify(value);
       }
 
+      if (name === "footer_media_type" && value !== "image") {
+        updated.footer_image_url = "";
+      }
+
+      if (name === "footer_media_type" && value !== "youtube") {
+        updated.footer_youtube_url = "";
+      }
+
       return updated;
     });
   };
@@ -132,23 +117,18 @@ const AdminArticlesScreen = () => {
     setFormData({
       title: article.title || "",
       slug: article.slug || "",
-      artist: article.artist || "",
       date: article.date || "",
       category: article.category || "",
       excerpt: article.excerpt || "",
       content_html: article.content_html || "",
-      card_image: article.card_image || "",
-      card_image_alt: article.card_image_alt || "",
-      hero_media: formatJsonForTextarea(article.hero_media),
-      og_image_url: article.og_image_url || "",
-      bottom_image_url: article.bottom_image_url || "",
-      video: formatJsonForTextarea(article.video),
-
-      cta_text: article.cta_text || "",
+      banner_image_url: article.banner_image_url || "",
+      footer_media_type: article.footer_media_type || "none",
+      footer_image_url: article.footer_image_url || "",
+      footer_youtube_url: article.footer_youtube_url || "",
+      cta_label: article.cta_label || "",
       cta_url: article.cta_url || "",
-
-      band_image: article.band_image || "",
-      band_image_alt: article.band_image_alt || "",
+      band_name: article.band_name || "",
+      band_image_url: article.band_image_url || "",
       band_website: article.band_website || "",
       band_facebook: article.band_facebook || "",
       band_instagram: article.band_instagram || "",
@@ -185,6 +165,72 @@ const AdminArticlesScreen = () => {
     setMessage("Article deleted successfully.");
   };
 
+  const handleImageUpload = async (e, fieldName) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingField(fieldName);
+      setMessage("");
+
+      const fileExt = file.name.split(".").pop();
+      const safeSlug = slugify(formData.slug || formData.title || "article-image");
+      const fileName = `${Date.now()}-${safeSlug}-${fieldName}.${fileExt}`;
+      const filePath = `articles/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from(ARTICLE_IMAGE_BUCKET)
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from(ARTICLE_IMAGE_BUCKET).getPublicUrl(filePath);
+
+      setFormData((prev) => ({
+        ...prev,
+        [fieldName]: publicUrl,
+      }));
+
+      setMessage("Image uploaded successfully.");
+    } catch (error) {
+      console.error(`Error uploading ${fieldName}:`, error);
+      setMessage(error.message || "Image upload failed.");
+    } finally {
+      setUploadingField("");
+      e.target.value = "";
+    }
+  };
+
+  const renderImagePreview = (label, url, altText = "Preview image") => {
+    if (!url) return null;
+
+    return (
+      <div className="admin-form-group">
+        <label>{label} Preview</label>
+        <div className="admin-item-card">
+          <div className="admin-item-card__content">
+            <img
+              src={url}
+              alt={altText}
+              className="admin-item-thumb"
+            />
+            <div>
+              <strong>{label}</strong>
+              <span>{url}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -194,23 +240,24 @@ const AdminArticlesScreen = () => {
       const articleData = {
         title: formData.title.trim(),
         slug: formData.slug.trim(),
-        artist: formData.artist.trim(),
         date: formData.date || null,
         category: formData.category.trim(),
         excerpt: formData.excerpt.trim(),
         content_html: formData.content_html,
-        card_image: formData.card_image.trim(),
-        card_image_alt: formData.card_image_alt.trim(),
-        hero_media: safeParseJson(formData.hero_media, {}),
-        og_image_url: formData.og_image_url.trim(),
-        bottom_image_url: formData.bottom_image_url.trim(),
-        video: safeParseJson(formData.video, {}),
-
-        cta_text: formData.cta_text.trim(),
+        banner_image_url: formData.banner_image_url.trim(),
+        footer_media_type: formData.footer_media_type.trim() || "none",
+        footer_image_url:
+          formData.footer_media_type === "image"
+            ? formData.footer_image_url.trim()
+            : "",
+        footer_youtube_url:
+          formData.footer_media_type === "youtube"
+            ? formData.footer_youtube_url.trim()
+            : "",
+        cta_label: formData.cta_label.trim(),
         cta_url: formData.cta_url.trim(),
-
-        band_image: formData.band_image.trim(),
-        band_image_alt: formData.band_image_alt.trim(),
+        band_name: formData.band_name.trim(),
+        band_image_url: formData.band_image_url.trim(),
         band_website: formData.band_website.trim(),
         band_facebook: formData.band_facebook.trim(),
         band_instagram: formData.band_instagram.trim(),
@@ -245,11 +292,13 @@ const AdminArticlesScreen = () => {
         throw new Error(response.error.message);
       }
 
+      const wasEditing = Boolean(editingArticle);
+
       resetForm();
       await fetchArticles();
 
       setMessage(
-        editingArticle
+        wasEditing
           ? "Article updated successfully."
           : "Article created successfully."
       );
@@ -266,6 +315,9 @@ const AdminArticlesScreen = () => {
       <div className="admin-panel">
         <div className="admin-page-header">
           <div>
+              <Link to="/admin" className="admin-back-link">
+                            ← Back to Admin Dashboard
+                        </Link>
             <p className="admin-eyebrow">Nu Metal Kingdom Admin</p>
             <h1 className="admin-page-title">
               {editingArticle ? "Edit Article" : "Add Article"}
@@ -294,7 +346,7 @@ const AdminArticlesScreen = () => {
           <div className="admin-section-card">
             <div className="admin-section-header">
               <h2>Article Details</h2>
-              <p>Main content, metadata, and article body.</p>
+              <p>Main content and article body.</p>
             </div>
 
             <div className="admin-form-grid admin-form-grid--two">
@@ -334,12 +386,12 @@ const AdminArticlesScreen = () => {
               </div>
 
               <div className="admin-form-group">
-                <label htmlFor="artist">Artist / Band Name</label>
+                <label htmlFor="band_name">Band Name</label>
                 <input
-                  id="artist"
-                  name="artist"
+                  id="band_name"
+                  name="band_name"
                   type="text"
-                  value={formData.artist}
+                  value={formData.band_name}
                   onChange={handleChange}
                 />
               </div>
@@ -383,80 +435,111 @@ const AdminArticlesScreen = () => {
           <div className="admin-section-card">
             <div className="admin-section-header">
               <h2>Images / Media</h2>
-              <p>Card image, Open Graph image, hero media, and video JSON.</p>
+              <p>Upload images or paste image URLs. Previews show automatically.</p>
             </div>
 
             <div className="admin-form-grid admin-form-grid--two">
               <div className="admin-form-group">
-                <label htmlFor="card_image">Card Image URL</label>
+                <label htmlFor="banner_image_url">Article Banner Image URL</label>
                 <input
-                  id="card_image"
-                  name="card_image"
+                  id="banner_image_url"
+                  name="banner_image_url"
                   type="text"
-                  value={formData.card_image}
+                  value={formData.banner_image_url}
                   onChange={handleChange}
                   placeholder="https://..."
                 />
               </div>
 
-              <div className="admin-form-group">
-                <label htmlFor="card_image_alt">Card Image Alt</label>
+              <div className="admin-file-upload">
                 <input
-                  id="card_image_alt"
-                  name="card_image_alt"
-                  type="text"
-                  value={formData.card_image_alt}
-                  onChange={handleChange}
+                  id="banner-image-upload"
+                  type="file"
+                  className="admin-file-input"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, "banner_image_url")}
                 />
+
+                <label htmlFor="banner-image-upload" className="admin-file-label">
+                  <span className="admin-file-btn">Choose File</span>
+                  <span className="admin-file-text">
+                    Upload Banner Image
+                  </span>
+                </label>
               </div>
 
-              <div className="admin-form-group">
-                <label htmlFor="og_image_url">OG Image URL</label>
-                <input
-                  id="og_image_url"
-                  name="og_image_url"
-                  type="text"
-                  value={formData.og_image_url}
-                  onChange={handleChange}
-                  placeholder="https://..."
-                />
-              </div>
+              {renderImagePreview(
+                "Article Banner",
+                formData.banner_image_url,
+                formData.title || "Article banner preview"
+              )}
 
               <div className="admin-form-group">
-                <label htmlFor="bottom_image_url">Bottom Image URL</label>
-                <input
-                  id="bottom_image_url"
-                  name="bottom_image_url"
-                  type="text"
-                  value={formData.bottom_image_url}
+                <label htmlFor="footer_media_type">Footer Media Type</label>
+                <select
+                  id="footer_media_type"
+                  name="footer_media_type"
+                  value={formData.footer_media_type}
                   onChange={handleChange}
-                  placeholder="https://..."
-                />
+                >
+                  <option value="none">None</option>
+                  <option value="image">Image</option>
+                  <option value="youtube">YouTube</option>
+                </select>
               </div>
 
-              <div className="admin-form-group">
-                <label htmlFor="hero_media">Hero Media JSON</label>
-                <textarea
-                  id="hero_media"
-                  name="hero_media"
-                  rows="8"
-                  value={formData.hero_media}
-                  onChange={handleChange}
-                  placeholder={`{\n  "url": "https://...jpg",\n  "alt": "Band image"\n}`}
-                />
-              </div>
+              {formData.footer_media_type === "image" && (
+                <>
+                  <div className="admin-form-group">
+                    <label htmlFor="footer_image_url">Footer Image URL</label>
+                    <input
+                      id="footer_image_url"
+                      name="footer_image_url"
+                      type="text"
+                      value={formData.footer_image_url}
+                      onChange={handleChange}
+                      placeholder="https://..."
+                    />
+                  </div>
 
-              <div className="admin-form-group">
-                <label htmlFor="video">Video JSON</label>
-                <textarea
-                  id="video"
-                  name="video"
-                  rows="8"
-                  value={formData.video}
-                  onChange={handleChange}
-                  placeholder={`{\n  "url": "https://www.youtube.com/watch?v=xxxxx"\n}`}
-                />
-              </div>
+                  <div className="admin-file-upload">
+                    <input
+                      id="footer-image-upload"
+                      type="file"
+                      className="admin-file-input"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, "footer_image_url")}
+                    />
+
+                    <label htmlFor="footer-image-upload" className="admin-file-label">
+                      <span className="admin-file-btn">Choose File</span>
+                      <span className="admin-file-text">
+                        Upload Footer Image
+                      </span>
+                    </label>
+                  </div>
+
+                  {renderImagePreview(
+                    "Footer Image",
+                    formData.footer_image_url,
+                    formData.title || "Footer image preview"
+                  )}
+                </>
+              )}
+
+              {formData.footer_media_type === "youtube" && (
+                <div className="admin-form-group">
+                  <label htmlFor="footer_youtube_url">Footer YouTube URL</label>
+                  <input
+                    id="footer_youtube_url"
+                    name="footer_youtube_url"
+                    type="text"
+                    value={formData.footer_youtube_url}
+                    onChange={handleChange}
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -468,14 +551,14 @@ const AdminArticlesScreen = () => {
 
             <div className="admin-form-grid admin-form-grid--two">
               <div className="admin-form-group">
-                <label htmlFor="cta_text">Button Text</label>
+                <label htmlFor="cta_label">Button Text</label>
                 <input
-                  id="cta_text"
-                  name="cta_text"
+                  id="cta_label"
+                  name="cta_label"
                   type="text"
-                  value={formData.cta_text}
+                  value={formData.cta_label}
                   onChange={handleChange}
-                  placeholder="Pre-Save This Single"
+                  placeholder="Read More"
                 />
               </div>
 
@@ -501,28 +584,39 @@ const AdminArticlesScreen = () => {
 
             <div className="admin-form-grid admin-form-grid--two">
               <div className="admin-form-group">
-                <label htmlFor="band_image">Band Image URL</label>
+                <label htmlFor="band_image_url">Band Image URL</label>
                 <input
-                  id="band_image"
-                  name="band_image"
+                  id="band_image_url"
+                  name="band_image_url"
                   type="text"
-                  value={formData.band_image}
+                  value={formData.band_image_url}
                   onChange={handleChange}
                   placeholder="https://..."
                 />
               </div>
 
-              <div className="admin-form-group">
-                <label htmlFor="band_image_alt">Band Image Alt Text</label>
+              <div className="admin-file-upload">
                 <input
-                  id="band_image_alt"
-                  name="band_image_alt"
-                  type="text"
-                  value={formData.band_image_alt}
-                  onChange={handleChange}
-                  placeholder="Band promo photo"
+                  id="band-image-upload"
+                  type="file"
+                  className="admin-file-input"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, "band_image_url")}
                 />
+
+                <label htmlFor="band-image-upload" className="admin-file-label">
+                  <span className="admin-file-btn">Choose File</span>
+                  <span className="admin-file-text">
+                    Upload Band Image
+                  </span>
+                </label>
               </div>
+
+              {renderImagePreview(
+                "Band Image",
+                formData.band_image_url,
+                formData.band_name || "Band image preview"
+              )}
 
               <div className="admin-form-group">
                 <label htmlFor="band_website">Band Website</label>
@@ -627,8 +721,8 @@ const AdminArticlesScreen = () => {
               {saving
                 ? "Saving..."
                 : editingArticle
-                ? "Update Article"
-                : "Add Article"}
+                  ? "Update Article"
+                  : "Add Article"}
             </button>
 
             {editingArticle && (
@@ -658,9 +752,9 @@ const AdminArticlesScreen = () => {
               {sortedArticles.map((article) => (
                 <div key={article.id} className="admin-item-card">
                   <div className="admin-item-card__content">
-                    {article.card_image ? (
+                    {article.banner_image_url ? (
                       <img
-                        src={article.card_image}
+                        src={article.banner_image_url}
                         alt={article.title}
                         className="admin-item-thumb"
                       />
@@ -669,11 +763,11 @@ const AdminArticlesScreen = () => {
                     <div>
                       <strong>{article.title}</strong>
                       <span>Slug: {article.slug}</span>
-                      {article.artist && <span>Artist: {article.artist}</span>}
+                      {article.band_name && <span>Band: {article.band_name}</span>}
                       {article.category && <span>Category: {article.category}</span>}
                       {article.date && <span>Date: {article.date}</span>}
-                      {article.cta_text && article.cta_url && (
-                        <span>CTA: {article.cta_text}</span>
+                      {article.cta_label && article.cta_url && (
+                        <span>CTA: {article.cta_label}</span>
                       )}
                     </div>
                   </div>
