@@ -10,7 +10,11 @@ const BandsScreen = () => {
   const [bands, setBands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedLetter, setSelectedLetter] = useState("ALL");
+  const [selectedGenre, setSelectedGenre] = useState("ALL");
+  const [selectedEra, setSelectedEra] = useState("ALL");
+  const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -46,7 +50,6 @@ const BandsScreen = () => {
         }
       }
 
-      console.log("Total bands fetched:", allBands.length);
       setBands(allBands);
       setLoading(false);
     };
@@ -65,9 +68,33 @@ const BandsScreen = () => {
     return uniqueBands.sort((a, b) => a.name.localeCompare(b.name));
   }, [bands]);
 
+  const genreOptions = useMemo(() => {
+    const genres = sortedBands.flatMap((band) =>
+      Array.isArray(band.subgenres) ? band.subgenres : []
+    );
+
+    return [...new Set(genres)].sort((a, b) => a.localeCompare(b));
+  }, [sortedBands]);
+
+  const eraOptions = useMemo(() => {
+    const eras = sortedBands.flatMap((band) =>
+      Array.isArray(band.era) ? band.era : []
+    );
+
+    return [...new Set(eras)].sort((a, b) => a.localeCompare(b));
+  }, [sortedBands]);
+
   const filteredBands = useMemo(() => {
     let filtered = sortedBands;
     const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    if (selectedStatus === "ACTIVE") {
+      filtered = filtered.filter((band) => band.active !== false);
+    }
+
+    if (selectedStatus === "INACTIVE") {
+      filtered = filtered.filter((band) => band.active === false);
+    }
 
     if (selectedLetter === "0-9") {
       filtered = filtered.filter((band) => /^[0-9]/.test(band.name));
@@ -77,14 +104,35 @@ const BandsScreen = () => {
       );
     }
 
+    if (selectedGenre !== "ALL") {
+      filtered = filtered.filter(
+        (band) =>
+          Array.isArray(band.subgenres) &&
+          band.subgenres.includes(selectedGenre)
+      );
+    }
+
+    if (selectedEra !== "ALL") {
+      filtered = filtered.filter(
+        (band) => Array.isArray(band.era) && band.era.includes(selectedEra)
+      );
+    }
+
     if (normalizedSearch !== "") {
       filtered = filtered.filter((band) =>
-        band.name.toLowerCase().startsWith(normalizedSearch)
+        band.name.toLowerCase().includes(normalizedSearch)
       );
     }
 
     return filtered;
-  }, [selectedLetter, searchTerm, sortedBands]);
+  }, [
+    selectedLetter,
+    selectedGenre,
+    selectedEra,
+    selectedStatus,
+    searchTerm,
+    sortedBands,
+  ]);
 
   return (
     <section className="bands-directory py-5">
@@ -104,37 +152,98 @@ const BandsScreen = () => {
                 />
               </div>
 
-              <div className="bands-filter mb-4">
+              <div className="bands-filter-toggle-wrap mb-4">
                 <button
-                  onClick={() => setSelectedLetter("ALL")}
-                  className={`filter-btn ${
-                    selectedLetter === "ALL" ? "active" : ""
-                  }`}
+                  type="button"
+                  className="filter-btn"
+                  onClick={() => setShowAdvancedFilters((prev) => !prev)}
                 >
-                  All
+                  {showAdvancedFilters ? "Hide Filters" : "More Filters"}
                 </button>
-
-                <button
-                  onClick={() => setSelectedLetter("0-9")}
-                  className={`filter-btn ${
-                    selectedLetter === "0-9" ? "active" : ""
-                  }`}
-                >
-                  0-9
-                </button>
-
-                {alphabet.map((letter) => (
-                  <button
-                    key={letter}
-                    onClick={() => setSelectedLetter(letter)}
-                    className={`filter-btn ${
-                      selectedLetter === letter ? "active" : ""
-                    }`}
-                  >
-                    {letter}
-                  </button>
-                ))}
               </div>
+
+              {showAdvancedFilters && (
+                <>
+                  <div className="bands-advanced-filters mb-4">
+                    <div className="bands-filter-group">
+                      <label className="bands-filter-label">Status</label>
+                      <select
+                        className="bands-filter-select"
+                        value={selectedStatus}
+                        onChange={(e) => setSelectedStatus(e.target.value)}
+                      >
+                        <option value="ALL">All Bands</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="INACTIVE">Inactive</option>
+                      </select>
+                    </div>
+
+                    <div className="bands-filter-group">
+                      <label className="bands-filter-label">Sub-Genre</label>
+                      <select
+                        className="bands-filter-select"
+                        value={selectedGenre}
+                        onChange={(e) => setSelectedGenre(e.target.value)}
+                      >
+                        <option value="ALL">All Genres</option>
+                        {genreOptions.map((genre) => (
+                          <option key={genre} value={genre}>
+                            {genre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="bands-filter-group">
+                      <label className="bands-filter-label">Era</label>
+                      <select
+                        className="bands-filter-select"
+                        value={selectedEra}
+                        onChange={(e) => setSelectedEra(e.target.value)}
+                      >
+                        <option value="ALL">All Eras</option>
+                        {eraOptions.map((era) => (
+                          <option key={era} value={era}>
+                            {era}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="bands-filter mb-4">
+                    <button
+                      onClick={() => setSelectedLetter("ALL")}
+                      className={`filter-btn ${
+                        selectedLetter === "ALL" ? "active" : ""
+                      }`}
+                    >
+                      All
+                    </button>
+
+                    <button
+                      onClick={() => setSelectedLetter("0-9")}
+                      className={`filter-btn ${
+                        selectedLetter === "0-9" ? "active" : ""
+                      }`}
+                    >
+                      0-9
+                    </button>
+
+                    {alphabet.map((letter) => (
+                      <button
+                        key={letter}
+                        onClick={() => setSelectedLetter(letter)}
+                        className={`filter-btn ${
+                          selectedLetter === letter ? "active" : ""
+                        }`}
+                      >
+                        {letter}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
 
               <div className="bands-directory-list">
                 {loading ? (

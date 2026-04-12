@@ -75,10 +75,8 @@ const BandDetailScreen = () => {
     <section className="band-detail py-5">
       <div className="container">
         <div className="row g-5">
-
           <div className="col-12 col-xl-8">
             <div className="band-main">
-
               <Link to="/bands" className="back-link">
                 ← Back to Bands
               </Link>
@@ -172,7 +170,6 @@ const BandDetailScreen = () => {
                   )}
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -185,7 +182,6 @@ const BandDetailScreen = () => {
               </div>
             </aside>
           </div>
-
         </div>
       </div>
     </section>

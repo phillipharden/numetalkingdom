@@ -21,6 +21,7 @@ const emptyForm = {
   era: "",
   christian: true,
   featured: false,
+  active: true,
 };
 
 const AdminBandsScreen = () => {
@@ -52,24 +53,46 @@ const AdminBandsScreen = () => {
         ? band.subgenres.join(" ").toLowerCase()
         : "";
       const era = Array.isArray(band.era) ? band.era.join(" ").toLowerCase() : "";
+      const activeStatus =
+        band.active === false ? "inactive" : "active";
 
       return (
         name.includes(term) ||
         location.includes(term) ||
         yearsActive.includes(term) ||
         subgenres.includes(term) ||
-        era.includes(term)
+        era.includes(term) ||
+        activeStatus.includes(term)
       );
     });
   }, [bands, search]);
 
+  const generateSlug = (text) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setFormData((prev) => {
+      const updated = {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      };
+
+      // Auto-generate slug when name changes
+      if (name === "name") {
+        updated.slug = generateSlug(value);
+      }
+
+      return updated;
+    });
   };
 
   const resetForm = () => {
@@ -228,6 +251,7 @@ const AdminBandsScreen = () => {
         .filter(Boolean),
       christian: formData.christian,
       featured: formData.featured,
+      active: formData.active,
     };
 
     let result;
@@ -273,6 +297,7 @@ const AdminBandsScreen = () => {
       era: Array.isArray(band.era) ? band.era.join(", ") : "",
       christian: !!band.christian,
       featured: !!band.featured,
+      active: band.active !== false,
     });
 
     setMessage(`Editing ${band.name}`);
@@ -365,7 +390,7 @@ const AdminBandsScreen = () => {
                 id="band-search"
                 type="text"
                 className="admin-search"
-                placeholder="Search by name, location, years, genre, or era..."
+                placeholder="Search by name, location, years, genre, era, or active status..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -397,6 +422,7 @@ const AdminBandsScreen = () => {
                         {Array.isArray(band.subgenres) && band.subgenres.length > 0 ? (
                           <span>{band.subgenres.join(", ")}</span>
                         ) : null}
+                        <span>{band.active === false ? "Inactive" : "Active"}</span>
                       </div>
                     </div>
                   </button>
@@ -657,6 +683,16 @@ const AdminBandsScreen = () => {
                   onChange={handleChange}
                 />
                 Featured
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="active"
+                  checked={formData.active}
+                  onChange={handleChange}
+                />
+                Active
               </label>
             </div>
 
