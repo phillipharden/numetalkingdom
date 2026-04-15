@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const ARTICLE_IMAGE_BUCKET = "article-images";
 
@@ -18,15 +18,7 @@ const emptyForm = {
   cta_label: "",
   cta_url: "",
   band_name: "",
-  band_image_url: "",
-  band_website: "",
-  band_facebook: "",
-  band_instagram: "",
-  band_x: "",
-  band_youtube: "",
-  band_spotify: "",
-  band_apple_music: "",
-  band_tiktok: "",
+  band_slug: "",
 };
 
 const AdminArticlesScreen = () => {
@@ -37,6 +29,12 @@ const AdminArticlesScreen = () => {
   const [saving, setSaving] = useState(false);
   const [uploadingField, setUploadingField] = useState("");
   const [message, setMessage] = useState("");
+
+  const [bandMatches, setBandMatches] = useState([]);
+  const [searchingBands, setSearchingBands] = useState(false);
+  const [showBandMatches, setShowBandMatches] = useState(false);
+
+  const bandSearchTimeout = useRef(null);
 
   const sortedArticles = useMemo(() => {
     return [...articles].sort((a, b) => {
@@ -49,6 +47,31 @@ const AdminArticlesScreen = () => {
   useEffect(() => {
     fetchArticles();
   }, []);
+
+  useEffect(() => {
+    const query = formData.band_name.trim();
+
+    if (!query) {
+      setBandMatches([]);
+      setSearchingBands(false);
+      setShowBandMatches(false);
+      return;
+    }
+
+    if (bandSearchTimeout.current) {
+      clearTimeout(bandSearchTimeout.current);
+    }
+
+    bandSearchTimeout.current = setTimeout(() => {
+      searchBands(query);
+    }, 250);
+
+    return () => {
+      if (bandSearchTimeout.current) {
+        clearTimeout(bandSearchTimeout.current);
+      }
+    };
+  }, [formData.band_name]);
 
   const fetchArticles = async () => {
     setLoading(true);
@@ -74,6 +97,9 @@ const AdminArticlesScreen = () => {
     setEditingArticle(null);
     setMessage("");
     setUploadingField("");
+    setBandMatches([]);
+    setShowBandMatches(false);
+    setSearchingBands(false);
   };
 
   const slugify = (value) => {
@@ -83,6 +109,45 @@ const AdminArticlesScreen = () => {
       .replace(/['"]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
+  };
+
+  const searchBands = async (query) => {
+    try {
+      setSearchingBands(true);
+
+      const { data, error } = await supabase
+        .from("bands")
+        .select("name, slug")
+        .ilike("name", `%${query}%`)
+        .order("name", { ascending: true })
+        .limit(8);
+
+      if (error) {
+        console.error("Error searching bands:", error);
+        setBandMatches([]);
+        return;
+      }
+
+      setBandMatches(data || []);
+      setShowBandMatches(true);
+    } catch (error) {
+      console.error("Band search failed:", error);
+      setBandMatches([]);
+    } finally {
+      setSearchingBands(false);
+    }
+  };
+
+  const applyBandToForm = (band) => {
+    setFormData((prev) => ({
+      ...prev,
+      band_name: band.name || "",
+      band_slug: band.slug || "",
+    }));
+
+    setBandMatches([]);
+    setShowBandMatches(false);
+    setMessage(`Band selected: ${band.name}`);
   };
 
   const handleChange = (e) => {
@@ -106,8 +171,16 @@ const AdminArticlesScreen = () => {
         updated.footer_youtube_url = "";
       }
 
+      if (name === "band_name") {
+        updated.band_slug = "";
+      }
+
       return updated;
     });
+
+    if (name === "band_name") {
+      setShowBandMatches(true);
+    }
   };
 
   const handleEdit = (article) => {
@@ -128,16 +201,11 @@ const AdminArticlesScreen = () => {
       cta_label: article.cta_label || "",
       cta_url: article.cta_url || "",
       band_name: article.band_name || "",
-      band_image_url: article.band_image_url || "",
-      band_website: article.band_website || "",
-      band_facebook: article.band_facebook || "",
-      band_instagram: article.band_instagram || "",
-      band_x: article.band_x || "",
-      band_youtube: article.band_youtube || "",
-      band_spotify: article.band_spotify || "",
-      band_apple_music: article.band_apple_music || "",
-      band_tiktok: article.band_tiktok || "",
+      band_slug: article.band_slug || "",
     });
+
+    setBandMatches([]);
+    setShowBandMatches(false);
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -216,11 +284,7 @@ const AdminArticlesScreen = () => {
         <label>{label} Preview</label>
         <div className="admin-item-card">
           <div className="admin-item-card__content">
-            <img
-              src={url}
-              alt={altText}
-              className="admin-item-thumb"
-            />
+            <img src={url} alt={altText} className="admin-item-thumb" />
             <div>
               <strong>{label}</strong>
               <span>{url}</span>
@@ -257,15 +321,7 @@ const AdminArticlesScreen = () => {
         cta_label: formData.cta_label.trim(),
         cta_url: formData.cta_url.trim(),
         band_name: formData.band_name.trim(),
-        band_image_url: formData.band_image_url.trim(),
-        band_website: formData.band_website.trim(),
-        band_facebook: formData.band_facebook.trim(),
-        band_instagram: formData.band_instagram.trim(),
-        band_x: formData.band_x.trim(),
-        band_youtube: formData.band_youtube.trim(),
-        band_spotify: formData.band_spotify.trim(),
-        band_apple_music: formData.band_apple_music.trim(),
-        band_tiktok: formData.band_tiktok.trim(),
+        band_slug: formData.band_slug.trim(),
       };
 
       if (!articleData.title) throw new Error("Title is required.");
@@ -315,15 +371,15 @@ const AdminArticlesScreen = () => {
       <div className="admin-panel">
         <div className="admin-page-header">
           <div>
-              <Link to="/admin" className="admin-back-link">
-                            ← Back to Admin Dashboard
-                        </Link>
+            <Link to="/admin" className="admin-back-link">
+              ← Back to Admin Dashboard
+            </Link>
             <p className="admin-eyebrow">Nu Metal Kingdom Admin</p>
             <h1 className="admin-page-title">
               {editingArticle ? "Edit Article" : "Add Article"}
             </h1>
             <p className="admin-page-subtitle">
-              Create, edit, and manage article content, CTA links, and band info.
+              Create, edit, and manage article content.
             </p>
           </div>
         </div>
@@ -385,7 +441,7 @@ const AdminArticlesScreen = () => {
                 />
               </div>
 
-              <div className="admin-form-group">
+              <div className="admin-form-group admin-band-search-group">
                 <label htmlFor="band_name">Band Name</label>
                 <input
                   id="band_name"
@@ -393,7 +449,38 @@ const AdminArticlesScreen = () => {
                   type="text"
                   value={formData.band_name}
                   onChange={handleChange}
+                  onFocus={() => {
+                    if (bandMatches.length > 0) setShowBandMatches(true);
+                  }}
+                  autoComplete="off"
+                  placeholder="Start typing to search bands..."
                 />
+
+                {searchingBands && (
+                  <div className="admin-muted-text mt-2">Searching bands...</div>
+                )}
+
+                {showBandMatches && bandMatches.length > 0 && (
+                  <div className="admin-band-search-results">
+                    {bandMatches.map((band) => (
+                      <button
+                        key={band.slug}
+                        type="button"
+                        className="admin-band-search-result"
+                        onClick={() => applyBandToForm(band)}
+                      >
+                        <strong>{band.name}</strong>
+                        <span>{band.slug}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {formData.band_slug && (
+                  <div className="admin-muted-text mt-2">
+                    Connected band slug: <strong>{formData.band_slug}</strong>
+                  </div>
+                )}
               </div>
 
               <div className="admin-form-group">
@@ -462,9 +549,7 @@ const AdminArticlesScreen = () => {
 
                 <label htmlFor="banner-image-upload" className="admin-file-label">
                   <span className="admin-file-btn">Choose File</span>
-                  <span className="admin-file-text">
-                    Upload Banner Image
-                  </span>
+                  <span className="admin-file-text">Upload Banner Image</span>
                 </label>
               </div>
 
@@ -513,9 +598,7 @@ const AdminArticlesScreen = () => {
 
                     <label htmlFor="footer-image-upload" className="admin-file-label">
                       <span className="admin-file-btn">Choose File</span>
-                      <span className="admin-file-text">
-                        Upload Footer Image
-                      </span>
+                      <span className="admin-file-text">Upload Footer Image</span>
                     </label>
                   </div>
 
@@ -576,153 +659,13 @@ const AdminArticlesScreen = () => {
             </div>
           </div>
 
-          <div className="admin-section-card">
-            <div className="admin-section-header">
-              <h2>Band / Artist Info</h2>
-              <p>Add optional artist image and social/profile links.</p>
-            </div>
-
-            <div className="admin-form-grid admin-form-grid--two">
-              <div className="admin-form-group">
-                <label htmlFor="band_image_url">Band Image URL</label>
-                <input
-                  id="band_image_url"
-                  name="band_image_url"
-                  type="text"
-                  value={formData.band_image_url}
-                  onChange={handleChange}
-                  placeholder="https://..."
-                />
-              </div>
-
-              <div className="admin-file-upload">
-                <input
-                  id="band-image-upload"
-                  type="file"
-                  className="admin-file-input"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, "band_image_url")}
-                />
-
-                <label htmlFor="band-image-upload" className="admin-file-label">
-                  <span className="admin-file-btn">Choose File</span>
-                  <span className="admin-file-text">
-                    Upload Band Image
-                  </span>
-                </label>
-              </div>
-
-              {renderImagePreview(
-                "Band Image",
-                formData.band_image_url,
-                formData.band_name || "Band image preview"
-              )}
-
-              <div className="admin-form-group">
-                <label htmlFor="band_website">Band Website</label>
-                <input
-                  id="band_website"
-                  name="band_website"
-                  type="text"
-                  value={formData.band_website}
-                  onChange={handleChange}
-                  placeholder="https://..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="band_facebook">Facebook</label>
-                <input
-                  id="band_facebook"
-                  name="band_facebook"
-                  type="text"
-                  value={formData.band_facebook}
-                  onChange={handleChange}
-                  placeholder="https://facebook.com/..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="band_instagram">Instagram</label>
-                <input
-                  id="band_instagram"
-                  name="band_instagram"
-                  type="text"
-                  value={formData.band_instagram}
-                  onChange={handleChange}
-                  placeholder="https://instagram.com/..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="band_x">X</label>
-                <input
-                  id="band_x"
-                  name="band_x"
-                  type="text"
-                  value={formData.band_x}
-                  onChange={handleChange}
-                  placeholder="https://x.com/..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="band_youtube">YouTube</label>
-                <input
-                  id="band_youtube"
-                  name="band_youtube"
-                  type="text"
-                  value={formData.band_youtube}
-                  onChange={handleChange}
-                  placeholder="https://youtube.com/..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="band_spotify">Spotify</label>
-                <input
-                  id="band_spotify"
-                  name="band_spotify"
-                  type="text"
-                  value={formData.band_spotify}
-                  onChange={handleChange}
-                  placeholder="https://open.spotify.com/..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="band_apple_music">Apple Music</label>
-                <input
-                  id="band_apple_music"
-                  name="band_apple_music"
-                  type="text"
-                  value={formData.band_apple_music}
-                  onChange={handleChange}
-                  placeholder="https://music.apple.com/..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="band_tiktok">TikTok</label>
-                <input
-                  id="band_tiktok"
-                  name="band_tiktok"
-                  type="text"
-                  value={formData.band_tiktok}
-                  onChange={handleChange}
-                  placeholder="https://tiktok.com/@..."
-                />
-              </div>
-            </div>
-          </div>
-
           <div className="admin-toolbar">
             <button type="submit" className="admin-btn" disabled={saving}>
               {saving
                 ? "Saving..."
                 : editingArticle
-                  ? "Update Article"
-                  : "Add Article"}
+                ? "Update Article"
+                : "Add Article"}
             </button>
 
             {editingArticle && (
@@ -764,6 +707,7 @@ const AdminArticlesScreen = () => {
                       <strong>{article.title}</strong>
                       <span>Slug: {article.slug}</span>
                       {article.band_name && <span>Band: {article.band_name}</span>}
+                      {article.band_slug && <span>Band Slug: {article.band_slug}</span>}
                       {article.category && <span>Category: {article.category}</span>}
                       {article.date && <span>Date: {article.date}</span>}
                       {article.cta_label && article.cta_url && (

@@ -1,18 +1,96 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { supabase } from "../lib/supabase";
+import {
+  SiFacebook,
+  SiInstagram,
+  SiX,
+  SiYoutube,
+  SiSpotify,
+  SiApplemusic,
+  SiTiktok,
+} from "react-icons/si";
+
+const formatDate = (value) => {
+  if (!value) return "";
+
+  const date = new Date(`${value}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return "";
+
+  try {
+    const parsed = new URL(url);
+
+    if (parsed.hostname.includes("youtube.com")) {
+      const videoId = parsed.searchParams.get("v");
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+      if (parsed.pathname.includes("/embed/")) return url;
+    }
+
+    if (parsed.hostname.includes("youtu.be")) {
+      const videoId = parsed.pathname.replace("/", "").trim();
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    return "";
+  } catch (error) {
+    console.error("Invalid YouTube URL:", error);
+    return "";
+  }
+};
 
 const ArticleDetails = ({ article }) => {
-  if (!article) {
-    return (
-      <article className="article-details">
-        <p>Article not found.</p>
-      </article>
-    );
-  }
+  const [band, setBand] = useState(null);
+
+  useEffect(() => {
+    const fetchBand = async () => {
+      if (!article?.band_slug) {
+        setBand(null);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("bands")
+        .select(`
+          name,
+          slug,
+          image_path,
+          website,
+          facebook,
+          instagram,
+          x,
+          youtube,
+          spotify,
+          apple_music,
+          tiktok
+        `)
+        .eq("slug", article.band_slug)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error loading band:", error);
+        setBand(null);
+      } else {
+        setBand(data || null);
+      }
+    };
+
+    fetchBand();
+  }, [article?.band_slug]);
+
+  if (!article) return null;
 
   const {
     title,
-    slug,
     date,
     category,
     excerpt,
@@ -24,184 +102,169 @@ const ArticleDetails = ({ article }) => {
     cta_label,
     cta_url,
     band_name,
-    band_image_url,
-    band_website,
-    band_facebook,
-    band_instagram,
-    band_x,
-    band_youtube,
-    band_spotify,
-    band_apple_music,
-    band_tiktok,
+    band_slug,
   } = article;
 
-  const siteUrl = "https://numetalkingdom.com";
-  const articleUrl = `${siteUrl}/articles/${slug}`;
-  const shareImage =
-    banner_image_url || `${siteUrl}/images/articles/default.jpg`;
+  const embedUrl = getYouTubeEmbedUrl(footer_youtube_url);
 
-  const getYouTubeEmbedUrl = (url) => {
-    if (!url) return "";
-
-    if (url.includes("youtube.com/embed/")) return url;
-
-    const watchMatch = url.match(/[?&]v=([^&]+)/);
-    if (watchMatch?.[1]) {
-      return `https://www.youtube.com/embed/${watchMatch[1]}`;
-    }
-
-    const shortMatch = url.match(/youtu\.be\/([^?&/]+)/);
-    if (shortMatch?.[1]) {
-      return `https://www.youtube.com/embed/${shortMatch[1]}`;
-    }
-
-    return "";
-  };
-
-  const footerYouTubeEmbedUrl =
-    footer_media_type === "youtube"
-      ? getYouTubeEmbedUrl(footer_youtube_url)
-      : "";
-
-  const bandLinks = [
-    { label: "Website", url: band_website },
-    { label: "Facebook", url: band_facebook },
-    { label: "Instagram", url: band_instagram },
-    { label: "X", url: band_x },
-    { label: "YouTube", url: band_youtube },
-    { label: "Spotify", url: band_spotify },
-    { label: "Apple Music", url: band_apple_music },
-    { label: "TikTok", url: band_tiktok },
-  ].filter((link) => link.url);
+  const socialLinks = [
+    { href: band?.website, label: "Website", icon: null, className: "website" },
+    { href: band?.facebook, label: "Facebook", icon: <SiFacebook />, className: "facebook" },
+    { href: band?.instagram, label: "Instagram", icon: <SiInstagram />, className: "instagram" },
+    { href: band?.x, label: "X", icon: <SiX />, className: "x" },
+    { href: band?.youtube, label: "YouTube", icon: <SiYoutube />, className: "youtube" },
+    { href: band?.spotify, label: "Spotify", icon: <SiSpotify />, className: "spotify" },
+    { href: band?.apple_music, label: "Apple Music", icon: <SiApplemusic />, className: "apple-music" },
+    { href: band?.tiktok, label: "TikTok", icon: <SiTiktok />, className: "tiktok" },
+  ].filter((item) => item.href);
 
   return (
-    <>
-      <Helmet>
-        <title>{title} | Nu Metal Kingdom</title>
-        <meta name="description" content={excerpt || title} />
-
-        <meta property="og:type" content="article" />
-        <meta property="og:site_name" content="Nu Metal Kingdom" />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={excerpt || title} />
-        <meta property="og:url" content={articleUrl} />
-        <meta property="og:image" content={shareImage} />
-        <meta property="og:image:alt" content={title} />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={excerpt || title} />
-        <meta name="twitter:image" content={shareImage} />
-      </Helmet>
-
-      <article className="article-details">
-        <Link to="/articles" className="back-link">
-          ← Back to Articles
-        </Link>
-
-        <div className="article-meta">
-          {category && <span className="article-category">{category}</span>}
-          {date && <span className="article-date"> • {date}</span>}
+    <article className="article-details">
+      {banner_image_url ? (
+        <div className="article-banner-wrap">
+          <img
+            src={banner_image_url}
+            alt={title || "Article banner"}
+            className="article-banner-image"
+          />
         </div>
+      ) : null}
+
+      <header className="article-header">
+        {category ? <p className="article-category">{category}</p> : null}
 
         <h1 className="article-title">{title}</h1>
 
-        {band_name && <div className="article-artist">{band_name}</div>}
+        <div className="article-meta">
+          {date ? <span className="article-date">{formatDate(date)}</span> : null}
 
-        {banner_image_url && (
-          <div className="article-hero">
-            <img
-              src={banner_image_url}
-              alt={title}
-              className="article-hero-image"
-            />
-          </div>
-        )}
+          {band_name ? (
+            <span className="article-band-name-wrap">
+              {band_slug ? (
+                <Link to={`/bands/${band_slug}`} className="article-band-name-link">
+                  {band_name}
+                </Link>
+              ) : (
+                <span className="article-band-name-link">{band_name}</span>
+              )}
+            </span>
+          ) : null}
+        </div>
 
-        {content_html && (
-          <div
-            className="article-content"
-            dangerouslySetInnerHTML={{ __html: content_html }}
+        {excerpt ? <p className="article-excerpt">{excerpt}</p> : null}
+      </header>
+
+      {content_html ? (
+        <div
+          className="article-content"
+          dangerouslySetInnerHTML={{ __html: content_html }}
+        />
+      ) : null}
+
+      {cta_label && cta_url ? (
+        <div className="article-cta-wrap">
+          <a
+            href={cta_url}
+            target="_blank"
+            rel="noreferrer"
+            className="article-cta-button"
+          >
+            {cta_label}
+          </a>
+        </div>
+      ) : null}
+
+      {footer_media_type === "image" && footer_image_url ? (
+        <div className="article-footer-media">
+          <img
+            src={footer_image_url}
+            alt={title || "Article footer"}
+            className="article-footer-image"
           />
-        )}
+        </div>
+      ) : null}
 
-        {footer_media_type === "image" && footer_image_url && (
-          <div className="article-bottom-image-wrap">
-            <img
-              src={footer_image_url}
-              alt={title}
-              className="article-bottom-image"
+      {footer_media_type === "youtube" && embedUrl ? (
+        <div className="article-footer-media">
+          <div className="article-video-embed">
+            <iframe
+              src={embedUrl}
+              title={title || "YouTube video"}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
             />
           </div>
-        )}
+        </div>
+      ) : null}
 
-        {footer_media_type === "youtube" && footerYouTubeEmbedUrl && (
-          <div className="article-bottom-video-wrap">
-            <div className="article-video">
-              <iframe
-                className="article-video-embed"
-                src={footerYouTubeEmbedUrl}
-                title={`${title} video`}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        )}
-
-        {cta_label && cta_url && (
-          <div className="article-cta-wrap">
-            <a
-              href={cta_url}
-              target="_blank"
-              rel="noreferrer"
-              className="article-cta-button"
-            >
-              {cta_label}
-            </a>
-          </div>
-        )}
-
-        {(band_image_url || band_name || bandLinks.length > 0) && (
-          <section className="article-band-section">
-            <h3 className="article-band-section-title">About the Artist</h3>
-
-            <div className="article-band-card">
-              {band_image_url && (
-                <div className="article-band-image-wrap">
+      {(band?.name || band?.image_path || socialLinks.length > 0) && (
+        <section className="article-band-section">
+          <div className="article-band-card">
+            {band?.image_path ? (
+              <div className="article-band-image-wrap">
+                {band?.slug ? (
+                  <Link to={`/bands/${band.slug}`}>
+                    <img
+                      src={band.image_path}
+                      alt={band.name || "Band"}
+                      className="article-band-image"
+                    />
+                  </Link>
+                ) : (
                   <img
-                    src={band_image_url}
-                    alt={band_name || title}
+                    src={band.image_path}
+                    alt={band.name || "Band"}
                     className="article-band-image"
                   />
-                </div>
-              )}
-
-              <div className="article-band-content">
-                {band_name && <h4 className="article-band-name">{band_name}</h4>}
-
-                {bandLinks.length > 0 && (
-                  <div className="article-band-links">
-                    {bandLinks.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="article-band-link"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
-                  </div>
                 )}
               </div>
+            ) : null}
+
+            <div className="article-band-content">
+              {band?.name ? (
+                <>
+                  <h3 className="article-band-heading">Connect with the Artist</h3>
+
+                  {band?.slug ? (
+                    <Link to={`/bands/${band.slug}`} className="article-band-title-link">
+                      {band.name}
+                    </Link>
+                  ) : (
+                    <h4 className="article-band-title">{band.name}</h4>
+                  )}
+                </>
+              ) : null}
+
+              {socialLinks.length > 0 ? (
+                <div className="article-band-links">
+                  {socialLinks.map((item) => (
+                    <a
+                      key={`${item.label}-${item.href}`}
+                      href={item.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`article-band-link ${item.className}`}
+                      aria-label={item.label}
+                      title={item.label}
+                    >
+                      {item.icon ? (
+                        <>
+                          <span className="article-band-link-icon">{item.icon}</span>
+                          <span className="article-band-link-text">{item.label}</span>
+                        </>
+                      ) : (
+                        <span className="article-band-link-text">{item.label}</span>
+                      )}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </div>
-          </section>
-        )}
-      </article>
-    </>
+          </div>
+        </section>
+      )}
+    </article>
   );
 };
 
