@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import SocialLinks from "../components/SocialLinks";
 
-import RecentArticles from "../components/RecentArticles";
+import RecentArticles from "../components/RecentNews";
 import UpcomingReleases from "../components/UpcomingReleases";
 
 const BandDetailScreen = () => {

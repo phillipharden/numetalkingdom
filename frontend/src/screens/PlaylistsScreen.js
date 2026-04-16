@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import RecentArticles from "../components/RecentArticles";
+import RecentArticles from "../components/RecentNews";
 import UpcomingReleases from "../components/UpcomingReleases";
 
 const PlaylistsScreen = () => {

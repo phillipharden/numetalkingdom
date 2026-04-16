@@ -1,0 +1,44 @@
+.recent-news {
+  margin-top: 2rem;
+}
+
+.recent-news-title {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.recent-news-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.recent-news-item {
+  margin-bottom: 0.65rem;
+}
+
+.recent-news-link {
+  color: var(--white);
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.recent-news-link:hover {
+  color: var(--gold);
+}
+
+.recent-news-footer {
+  margin-top: 1rem;
+}
+
+.recent-news-view-all {
+  font-size: 0.85rem;
+  color: var(--silver);
+  text-decoration: none;
+}
+
+.recent-news-view-all:hover {
+  color: var(--gold);
+}

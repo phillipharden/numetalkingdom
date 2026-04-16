@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import RecentArticles from "../components/RecentArticles";
+import RecentArticles from "../components/RecentNews";
 import UpcomingReleases from "../components/UpcomingReleases";
 
 const PAGE_SIZE = 1000;

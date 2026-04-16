@@ -14,11 +14,10 @@ import Footer from "./components/Footer";
 import HomeScreen from "./screens/HomeScreen";
 import BandsScreen from "./screens/BandsScreen";
 import BandDetailScreen from "./screens/BandDetailsScreen";
-import NewMusicScreen from "./screens/NewMusicScreen";
 import AboutScreen from "./screens/AboutScreen";
 import ReleasesPage from "./screens/ReleasesPage";
-import ArticlesScreen from "./screens/ArticlesScreen";
-import ArticleDetailsScreen from "./screens/ArticleDetailsScreen";
+import ArticlesScreen from "./screens/NewsScreen";
+import ArticleDetailsScreen from "./screens/NewsDetailsScreen";
 import PlaylistsScreen from "./screens/PlaylistsScreen";
 
 function App() {
@@ -30,12 +29,11 @@ function App() {
         <Route path="/" element={<HomeScreen />} />
         <Route path="/bands" element={<BandsScreen />} />
         <Route path="/bands/:slug" element={<BandDetailScreen />} />
-        <Route path="/new-music" element={<NewMusicScreen />} />
         <Route path="/playlists" element={<PlaylistsScreen />} />
         <Route path="/about" element={<AboutScreen />} />
         <Route path="/releases" element={<ReleasesPage />} />
-        <Route path="/articles" element={<ArticlesScreen />} />
-        <Route path="/articles/:slug" element={<ArticleDetailsScreen />} />
+        <Route path="/news" element={<ArticlesScreen />} />
+        <Route path="/news/:slug" element={<ArticleDetailsScreen />} />
 
         <Route path="/admin-login" element={<AdminLoginScreen />} />
         <Route path="/admin" element={

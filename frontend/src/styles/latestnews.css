@@ -1,0 +1,88 @@
+.featured-latest-news {
+  margin: 2rem 0 0;
+}
+
+.featured-latest-news-card {
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.featured-latest-news-label {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+
+.featured-latest-news-title {
+  margin-bottom: 16px;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1.1;
+}
+
+.featured-latest-news-title a {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.featured-latest-news-title a:hover {
+  color: var(--gold);
+}
+
+.featured-latest-news-artist,
+.featured-latest-news-date {
+  margin-bottom: 10px;
+  color: var(--silver);
+  font-weight: 600;
+}
+
+.featured-latest-news-image-link {
+  display: block;
+  margin-bottom: 22px;
+}
+
+.featured-latest-news-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.featured-latest-news-excerpt {
+  margin-bottom: 22px;
+  color: rgba(255, 255, 255, 0.86);
+  line-height: 1.75;
+  font-size: 1.05rem;
+}
+
+.featured-latest-news-button {
+  display: inline-block;
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.featured-latest-news-button:hover {
+  color: var(--white);
+}
+
+@media (max-width: 767px) {
+  .featured-latest-news-card {
+    padding: 20px;
+  }
+
+  .featured-latest-news-title {
+    font-size: 1.9rem;
+  }
+
+  .featured-latest-news-excerpt {
+    font-size: 1rem;
+  }
+}

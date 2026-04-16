@@ -1,4 +1,4 @@
-import RecentArticles from "../components/RecentArticles";
+import RecentArticles from "../components/RecentNews";
 import UpcomingReleases from "../components/UpcomingReleases";
 
 const AboutScreen = () => {

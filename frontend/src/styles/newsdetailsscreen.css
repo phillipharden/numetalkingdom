@@ -1,0 +1,20 @@
+.news-details-page {
+  color: var(--silver);
+}
+
+.news-details-main {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+.news-details-sidebar {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 1199px) {
+  .news-details-sidebar {
+    margin-top: 10px;
+  }
+}

@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import BackgroundVideo from "../components/BackgroundVideo";
 import UpcomingReleases from "../components/UpcomingReleases";
 import SpotifyPlaylist from "../components/SpotifyPlaylist";
-import RecentArticles from "../components/RecentArticles";
-import LatestArticle from "../components/LatestArticle";
+import RecentArticles from "../components/RecentNews";
+import LatestArticle from "../components/LatestNews";
 
 const HomeScreen = () => {
   return (

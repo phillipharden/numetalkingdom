@@ -103,12 +103,18 @@ const AdminArticlesScreen = () => {
   };
 
   const slugify = (value) => {
-    return value
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+
+    const baseSlug = value
       .toLowerCase()
       .trim()
       .replace(/['"]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
+
+    return `${year}-${month}-${baseSlug}`;
   };
 
   const searchBands = async (query) => {
